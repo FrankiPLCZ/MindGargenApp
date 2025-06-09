@@ -1,1 +1,2 @@
 Pierwszy testowy update
+Drugi testowy update, czy teraz jest już tylko główny branch
