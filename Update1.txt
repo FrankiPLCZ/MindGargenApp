@@ -1,2 +1,3 @@
 Pierwszy testowy update
 Drugi testowy update, czy teraz jest już tylko główny branch
+Okay, now we need some consistency and clean commit titles
