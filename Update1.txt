@@ -3,3 +3,4 @@ Drugi testowy update, czy teraz jest już tylko główny branch
 Okay, now we need some consistency and clean commit titles
 Trzebaby jakiś dobry progres dodać
 Kolejny dzień bez znaczengo postępu na następny raz trzeby może chociaż android studio pobrać
+kolejny dzień, wróciłem z pyrkonu i było w pytem
