@@ -12,3 +12,5 @@ Dobra wygląda na to że próbujemy się nauczyć fluttera albo reacta jeszcze d
 Dzisiaj miałem pobrać flutter i zacząć coś robić ale eh nie pykło, jutro siąde
 pierwszy update z gita w visualu
 Nowy wpis: 3 lipca 2025 – Dzisiaj faktycznie coś się dodało! 🚀
+Dobra koniec na dzisiaj, udało mi się trochę popchnąć do przodu wszystko, stanąłem na odpalaniu przyspieszania akceleracji maszyny wirtualnej bo to dużżo czytania
+Skibi 
