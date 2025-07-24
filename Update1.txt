@@ -21,3 +21,21 @@ jak ostatnio xd
 Dzisiaj spróbowałem odpalicz tutorial ale sie na yt zaczalem obijać dodałem go do ulubionych żeby tak nie skończyć też jutro
 33 dni do urodzin mamy
 32 dni do urodzin mamy, a ja zmarłem na yt XD 
+===================================================================
+Dni niewiele, trza przemyśleć design nieco funkcjonalny i UI 
+Jeżeli chodzi o funkcyjny to myślę że dobrze by było odpalić apke i za pierwszym razem jakiś tutorial o funkcjach
+wyświetlić z przewijanym widokiem co i jak się robi, wpisać jakieś swoje dane? Nie wiem czy jest sens jakieś konto
+robić chyba lokalnie lepiej wszystko mieć bo to kolejny layer kodowania będzie a chyba mi się nie chce w to bawić 
+Także narazie to odpuśćmy i skupmy się na mięsku. Zawsze można dodać takie cudo potem. 
+Jeżeli chodzi o funckjonalność to na pewno powinno być jakieś automatyczne sadzenie chwastów po kliknięciu guzika na 
+środku, narazie bez jakiegoś dodawania charakteru do tych chwastów po prostu klikasz i się chuj spawnuje, jak klikniesz
+w niego gdzie się zespawnował to znika z kojącym dźwiękiem i tyle. Potem jak zostanie czas można by dodać jakieś
+opcje żeby sobie zasadzić pozytywne wspomnienie. żeby było łatwiej to to już na sąsiednim ekranie i opcję że raz na 
+dzień sobie nad tym pomedytować i po 4 razach (spwanuje się po zasadzeniu z jednym) wyrasta z tego jakaś w fajna 
+roślinka wspomnieniowa. I to chyba tyle jeżeli chodzi o mechanikę. Jakieś pierdy można dodać później
+
+W kwesti UI to będzie jak najprostsze ciężko mi wymyślić jak ma to zacnie wyglądać z tak naprawdę tylko możliwościami
+spriteów bez elementów prawdziwego 3d no ale coś się wykombinuje, najpierw chyba najlepiej zrobić gówno działające a
+potem się zastanawiać nad innymi designami
+
+Trzeba ogarnąć bo nie znikają z licznika te usunięte guziki i zrobić jakiś globalny licznik tego cudenka

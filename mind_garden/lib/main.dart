@@ -49,6 +49,8 @@ void main(List<String> args) {
 }
 
 class MindGardenApp extends StatelessWidget {
+  const MindGardenApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -58,23 +60,88 @@ class MindGardenApp extends StatelessWidget {
           backgroundColor: Colors.green,
           foregroundColor: Colors.black,
         ),
-        body: Center(
-          child: RippleButton(),
-        ),
+        body: const RippleSpawner(),
       ),
     );
   }
 }
 
+class RippleSpawner extends StatefulWidget {
+  const RippleSpawner({super.key});
+
+  @override
+  State<RippleSpawner> createState() => _RippleSpawnerState();
+}
+
+class _RippleSpawnerState extends State<RippleSpawner> {
+  final List<Widget> _ripples = [];
+  static const int maxRipples = 10;
+
+  void _spawnRipple() {
+    if (_ripples.length >= maxRipples) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Limit osiągnięty'),
+          content: const Text('Zespawnowałeś już 10 złych myśli. Skup się na nich najpierw zanim ruszysz dalej.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    setState(() {
+      _ripples.add(RippleButton(
+        key: UniqueKey(),
+      ));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Wyśrodkowane ripple'y
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: _ripples,
+          ),
+        ),
+        // Przycisk na dole ekranu
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 32,
+          child: Center(
+            child: ElevatedButton(
+              onPressed: _spawnRipple,
+              child: const Text('Dodaj guzik'),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class RippleButton extends StatefulWidget {
+  const RippleButton({super.key});
+
   @override
   State<RippleButton> createState() => _RippleButtonState();
 }
 
 class _RippleButtonState extends State<RippleButton> with TickerProviderStateMixin {
-  final double size = 200;
+  final double size = 100;
   Offset? tapPosition;
   late AnimationController _controller;
+  double _opacity = 1.0;
+  bool _removed = false; // Dodaj flagę usunięcia
 
   @override
   void initState() {
@@ -94,32 +161,48 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
   void _startRipple(TapDownDetails details) {
     setState(() {
       tapPosition = details.localPosition;
+      _opacity = 0.0;
     });
     _controller.forward(from: 0);
+
+    // Usuń guzik po zakończeniu animacji opacity
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        setState(() {
+          _removed = true;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _startRipple,
-      child: CustomPaint(
-        painter: RipplePainter(
-          animation: _controller,
-          tapPosition: tapPosition,
-          color: Colors.green,
-        ),
-        child: Container(
-          height: size,
-          width: size,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.lightGreen[50],
-            border: Border.all(color: Colors.green, width: 2),
-            borderRadius: BorderRadius.circular(10),
+    if (_removed) return const SizedBox.shrink();
+
+    return AnimatedOpacity(
+      opacity: _opacity,
+      duration: const Duration(milliseconds: 1500),
+      child: GestureDetector(
+        onTapDown: _startRipple,
+        child: CustomPaint(
+          painter: RipplePainter(
+            animation: _controller,
+            tapPosition: tapPosition,
+            color: Colors.green,
           ),
-          child: Text(
-            'Kliknij!',
-            style: TextStyle(fontSize: 24),
+          child: Container(
+            height: size,
+            width: size,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.lightGreen[50],
+              border: Border.all(color: Colors.green, width: 2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Text(
+              'Kliknij!',
+              style: TextStyle(fontSize: 24),
+            ),
           ),
         ),
       ),
