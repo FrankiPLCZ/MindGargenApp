@@ -39,3 +39,4 @@ spriteów bez elementów prawdziwego 3d no ale coś się wykombinuje, najpierw c
 potem się zastanawiać nad innymi designami
 
 Trzeba ogarnąć bo nie znikają z licznika te usunięte guziki i zrobić jakiś globalny licznik tego cudenka
+break
