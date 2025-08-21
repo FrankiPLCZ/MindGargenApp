@@ -43,6 +43,7 @@
 // }
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:audioplayers/audioplayers.dart';
 
 void main(List<String> args) {
   runApp(MindGardenApp());
@@ -141,7 +142,8 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
   Offset? tapPosition;
   late AnimationController _controller;
   double _opacity = 1.0;
-  bool _removed = false; // Dodaj flagę usunięcia
+  bool _removed = false;
+  final AudioPlayer _audioPlayer = AudioPlayer(); // Dodaj AudioPlayer
 
   @override
   void initState() {
@@ -155,17 +157,20 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
   @override
   void dispose() {
     _controller.dispose();
+    _audioPlayer.dispose(); // zwolnij zasoby AudioPlayer
     super.dispose();
   }
 
-  void _startRipple(TapDownDetails details) {
+  void _startRipple(TapDownDetails details) async {
     setState(() {
       tapPosition = details.localPosition;
       _opacity = 0.0;
     });
     _controller.forward(from: 0);
 
-    // Usuń guzik po zakończeniu animacji opacity
+    // Odtwórz dźwięk gong.wav z assets
+    await _audioPlayer.play(AssetSource('gong1.wav'));
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
         setState(() {
