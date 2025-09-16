@@ -1,46 +1,3 @@
-// import 'package:flutter/material.dart';
-
-// void main(List<String> args) {
-//   runApp(MindGardenApp());
-
-// }
-
-// class MindGardenApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Welcome to Mind Garden'),
-//           backgroundColor: Colors.green,
-//           foregroundColor: Colors.black,
-//         ),
-//         body: Center(
-//           child: Container(
-//             height: 300,
-//             width: 300,
-//           alignment: Alignment.center,
-//           decoration: BoxDecoration(
-//             color: Colors.lightGreen[50],
-//             border: Border.all(color: Colors.green, width: 2),
-//             borderRadius: BorderRadius.circular(10),
-//           ),
-//           child: Material(
-//             color: Colors.transparent,
-//             child: InkWell(
-//               borderRadius: BorderRadius.circular(50),
-//               splashColor: const Color.fromARGB(255, 204, 240, 105).withOpacity(0.8), // kolor animacji
-//               onTap: () {
-//                 // tutaj możesz dodać swoją logikę po kliknięciu
-//               },
-//             ),
-//           ),
-//         ),
-//       ),
-//     ),
-//   );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
@@ -56,12 +13,15 @@ class MindGardenApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Mind Garden'),
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.black,
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/background_clean.png'), // lub inny plik z assets
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: const RippleSpawner(),
         ),
-        body: const RippleSpawner(),
       ),
     );
   }
