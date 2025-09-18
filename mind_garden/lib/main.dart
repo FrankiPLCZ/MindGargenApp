@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 
+// Dodaj globalną zmienną blokady
+final ValueNotifier<bool> rippleButtonBlocked = ValueNotifier<bool>(false);
+
 void main(List<String> args) {
   runApp(MindGardenApp());
 }
@@ -149,6 +152,26 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
   }
 
   void _startRipple(TapDownDetails details) async {
+    if (rippleButtonBlocked.value) {
+      // Możesz dodać dialog z informacją o blokadzie
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Uwaga'),
+          content: const Text('Skup się na jednej myśli naraz. Poczekaj 10 sekund przed kolejnym kliknięciem.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    rippleButtonBlocked.value = true; // ustaw blokadę
+
     setState(() {
       tapPosition = details.localPosition;
       _opacity = 0.0;
@@ -162,6 +185,11 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
       if (mounted) {
         widget.onRemove();
       }
+    });
+
+    // Odblokuj po 10 sekundach
+    Future.delayed(const Duration(seconds: 10), () {
+      rippleButtonBlocked.value = false;
     });
   }
 
