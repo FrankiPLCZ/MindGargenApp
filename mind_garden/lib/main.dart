@@ -193,39 +193,37 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_removed) return const SizedBox.shrink();
+@override
+Widget build(BuildContext context) {
+  if (_removed) return const SizedBox.shrink();
 
-    return AnimatedOpacity(
-      opacity: _opacity,
-      duration: const Duration(milliseconds: 1500),
-      child: GestureDetector(
-        onTapDown: _startRipple,
-        child: CustomPaint(
-          painter: RipplePainter(
-            animation: _controller,
-            tapPosition: tapPosition,
-            color: Colors.green,
-          ),
-          child: Container(
-            height: size,
-            width: size,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.lightGreen[50],
-              border: Border.all(color: Colors.green, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Text(
-              'Kliknij!',
-              style: TextStyle(fontSize: 24),
+  return AnimatedOpacity(
+    opacity: _opacity,
+    duration: const Duration(milliseconds: 1500),
+    child: GestureDetector(
+      onTapDown: _startRipple, // TapDownDetails -> void _startRipple(TapDownDetails d)
+      child: CustomPaint(
+        painter: RipplePainter(
+          animation: _controller,
+          tapPosition: tapPosition,
+          color: Colors.green,
+        ),
+        child: SizedBox(
+          height: size,
+          width: size,
+          child: Center(
+            child: Image.asset(
+              'assets/Chwast1.png',
+              fit: BoxFit.contain,
+              height: size,
+              width: size,
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class RipplePainter extends CustomPainter {
