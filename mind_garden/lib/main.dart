@@ -35,16 +35,17 @@ class RippleSpawner extends StatefulWidget {
 }
 
 class _RippleSpawnerState extends State<RippleSpawner> {
-  final List<Widget> _ripples = [];
-  static const int maxRipples = 10;
+  final List<RippleButton> _ripples = []; // <-- Popraw z List<Widget> na List<RippleButton>
+  static const int maxRipples = 5;
+  final List<Offset> _occupiedPositions = [];
 
   void _spawnRipple() {
-    if (_ripples.length >= maxRipples) {
+    if (_ripples.length >= 5) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Limit osiągnięty'),
-          content: const Text('Zespawnowałeś już 10 złych myśli. Skup się na nich najpierw zanim ruszysz dalej.'),
+          content: const Text('Możesz mieć tylko 5 aktywnych guzików naraz.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -55,24 +56,42 @@ class _RippleSpawnerState extends State<RippleSpawner> {
       );
       return;
     }
+
+    // Filtruj wolne pozycje
+    final freePositions = buttonPositions.where((pos) => !_occupiedPositions.contains(pos)).toList();
+    if (freePositions.isEmpty) return; // nie ma wolnych miejsc
+
+    final random = Random();
+    final pos = freePositions[random.nextInt(freePositions.length)];
+
     setState(() {
+      _occupiedPositions.add(pos);
+      final rippleKey = UniqueKey();
       _ripples.add(RippleButton(
-        key: UniqueKey(),
+        key: rippleKey,
+        xProportion: pos.dx,
+        yProportion: pos.dy,
+        onRemove: () {
+          setState(() {
+            _ripples.removeWhere((r) => r.key == rippleKey);
+            _occupiedPositions.remove(pos);
+          });
+        },
       ));
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Stack(
       children: [
-        // Wyśrodkowane ripple'y
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: _ripples,
-          ),
-        ),
+        ..._ripples.map((ripple) => Positioned(
+          left: screenWidth * ripple.xProportion,
+          top: screenHeight * ripple.yProportion,
+          child: ripple,
+        )),
         // Przycisk na dole ekranu
         Positioned(
           left: 0,
@@ -91,7 +110,15 @@ class _RippleSpawnerState extends State<RippleSpawner> {
 }
 
 class RippleButton extends StatefulWidget {
-  const RippleButton({super.key});
+  final double xProportion;
+  final double yProportion;
+  final VoidCallback onRemove;
+  const RippleButton({
+    super.key,
+    required this.xProportion,
+    required this.yProportion,
+    required this.onRemove,
+  });
 
   @override
   State<RippleButton> createState() => _RippleButtonState();
@@ -133,9 +160,7 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
 
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
-        setState(() {
-          _removed = true;
-        });
+        widget.onRemove();
       }
     });
   }
@@ -216,3 +241,11 @@ class RipplePainter extends CustomPainter {
   bool shouldRepaint(RipplePainter oldDelegate) =>
       oldDelegate.animation != animation || oldDelegate.tapPosition != tapPosition;
 }
+
+final List<Offset> buttonPositions = [
+  Offset(0.2, 0.3),
+  Offset(0.5, 0.5),
+  Offset(0.8, 0.2),
+  Offset(0.3, 0.7),
+  Offset(0.7, 0.8),
+];
