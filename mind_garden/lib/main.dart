@@ -14,17 +14,42 @@ class MindGardenApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PageController controller = PageController(initialPage: 1);
     return MaterialApp(
       home: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/background_clean.png'), // lub inny plik z assets
-              fit: BoxFit.fill,
+        body:PageView(
+          controller: controller,
+          scrollDirection: Axis.horizontal,
+          children: [
+                Container(
+                  color: Colors.green.shade100,
+                  alignment: Alignment.center,
+                  child: const Text(
+                  "Hello tutaj twoje staty 🌱",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                  image: DecorationImage(
+                  image: AssetImage('assets/background_clean.png'), // lub inny plik z assets
+                  fit: BoxFit.fill,
             ),
           ),
-          child: const RippleSpawner(),
+                  child: const RippleSpawner(),
+                      ),
+                Container(
+                  color: Colors.green.shade100,
+                  alignment: Alignment.center,
+                  child: const Text(
+                  "Hello tutaj rajski ogród 🌱",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+            ),                
+          ],
         ),
+
+
       ),
     );
   }
