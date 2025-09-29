@@ -40,3 +40,6 @@ potem się zastanawiać nad innymi designami
 
 Trzeba ogarnąć bo nie znikają z licznika te usunięte guziki i zrobić jakiś globalny licznik tego cudenka
 break
+Trzeba dodać obsługe nowych panelów 
+    -liczenie statów dla użytkownika z jakąś obsługą logowania/nicku itp czy coś i bazą danych 
+    -sadzenie pozytywnych myśli z opcją dodawania zdjęcia z jakimś przewijanym w nieskończoność panelem wertykalnym
