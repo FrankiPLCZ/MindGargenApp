@@ -39,7 +39,6 @@ class RippleSpawner extends StatefulWidget {
 
 class _RippleSpawnerState extends State<RippleSpawner> {
   final List<RippleButton> _ripples = []; // <-- Popraw z List<Widget> na List<RippleButton>
-  static const int maxRipples = 5;
   final List<Offset> _occupiedPositions = [];
 
   void _spawnRipple() {
@@ -170,7 +169,7 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
       return;
     }
 
-    rippleButtonBlocked.value = true; // ustaw blokadę
+    // rippleButtonBlocked.value = true; // ustaw blokadę
 
     setState(() {
       tapPosition = details.localPosition;
@@ -269,9 +268,9 @@ class RipplePainter extends CustomPainter {
 }
 
 final List<Offset> buttonPositions = [
-  Offset(0.2, 0.3),
+  Offset(0.25, 0.75),
   Offset(0.5, 0.5),
-  Offset(0.8, 0.2),
-  Offset(0.3, 0.7),
-  Offset(0.7, 0.8),
+  Offset(0.7, 0.4),
+  Offset(0.72, 0.58),
+  Offset(0.54, 0.68),
 ];
