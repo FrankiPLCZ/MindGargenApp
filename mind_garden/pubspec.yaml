@@ -40,15 +40,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  flutter_launcher_icons: ^0.10.0  # <-- dodaj
+  flutter_launcher_icons: ^0.13.1  # <-- dodaj
 
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/app_icon.png"            # iOS / fallback
-  android_adaptive_icon:
-    foreground_image: "assets/app_icon_fg.png"
-    background_image: "#2F3A1F"
+  image_path: "assets/app_icon_0_1.png"            # iOS / fallback
+  adaptive_icon_foreground: "assets/app_icon_0_4.png"
+  adaptive_icon_background: "#FFFFFF"
+ 
   
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -65,6 +65,7 @@ flutter:
   assets:
     - assets/gong1.wav
     - assets/background_clean.png
+    - assets/holy_garden_clean.png
     - assets/Chwast1.png
     - assets/Chwast2.png
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async'; // <-- Dodaj import Timer
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -17,39 +18,37 @@ class MindGardenApp extends StatelessWidget {
     final PageController controller = PageController(initialPage: 1);
     return MaterialApp(
       home: Scaffold(
-        body:PageView(
+        body: PageView(
           controller: controller,
           scrollDirection: Axis.horizontal,
           children: [
-                Container(
-                  color: Colors.green.shade100,
-                  alignment: Alignment.center,
-                  child: const Text(
-                  "Hello tutaj twoje staty 🌱",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                  image: DecorationImage(
+            Container(
+              color: Colors.green.shade100,
+              alignment: Alignment.center,
+              child: const Text(
+                "Hello tutaj twoje staty 🌱",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
                   image: AssetImage('assets/background_clean.png'), // lub inny plik z assets
                   fit: BoxFit.fill,
-            ),
-          ),
-                  child: const RippleSpawner(),
-                      ),
-                Container(
-                  color: Colors.green.shade100,
-                  alignment: Alignment.center,
-                  child: const Text(
-                  "Hello tutaj rajski ogród 🌱",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),                
+              child: const RippleSpawner(),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/holy_garden_clean.png'), // lub inny plik z assets
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
           ],
         ),
-
-
       ),
     );
   }
@@ -177,7 +176,6 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
 
   void _startRipple(TapDownDetails details) async {
     if (rippleButtonBlocked.value) {
-      // Możesz dodać dialog z informacją o blokadzie
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -194,7 +192,11 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
       return;
     }
 
-    // rippleButtonBlocked.value = true; // ustaw blokadę
+    // ustaw blokadę globalną i uruchom 10s timer
+    rippleButtonBlocked.value = true;
+    Timer(const Duration(seconds: 10), () {
+      rippleButtonBlocked.value = false;
+    });
 
     setState(() {
       tapPosition = details.localPosition;
@@ -209,11 +211,6 @@ class _RippleButtonState extends State<RippleButton> with TickerProviderStateMix
       if (mounted) {
         widget.onRemove();
       }
-    });
-
-    // Odblokuj po 10 sekundach
-    Future.delayed(const Duration(seconds: 10), () {
-      rippleButtonBlocked.value = false;
     });
   }
 
