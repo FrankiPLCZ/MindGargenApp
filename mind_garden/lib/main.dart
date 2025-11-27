@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:mind_garden/flowers.dart';
 
 // globalna blokada ripple
 final ValueNotifier<bool> rippleButtonBlocked = ValueNotifier<bool>(false);
@@ -53,61 +54,65 @@ class _MindGardenHomeState extends State<MindGardenHome> {
     if (!mounted) return;
 
     // 3. odpalamy dialog z BEZPIECZNEGO kontekstu (MindGardenHome)
-    _openMemoryDialog();
+    showAddMemorySheet(context);
   }
 
   // osobna funkcja do obsługi dialogu – nie jest powiązana z ripple
-  void _openMemoryDialog() async {
-    final TextEditingController opisController = TextEditingController();
+  // void _openMemoryDialog() async {
+  //   final TextEditingController opisController = TextEditingController();
 
-    final String? result = await showDialog<String>(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: const Text('Dodaj wspomnienie 🌱'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Opisz swoje wspomnienie:'),
-              const SizedBox(height: 12),
-              TextField(
-                controller: opisController,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Np. spacer po lesie, zapach deszczu...',
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop(null); // anuluj
-              },
-              child: const Text('Anuluj'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final tekst = opisController.text.trim();
-                Navigator.of(ctx).pop(tekst); // zwróć tekst
-              },
-              child: const Text('Zapisz'),
-            ),
-          ],
-        );
-      },
-    );
+  //   final String? result = await showDialog<String>(
+  //     context: context,
+  //     builder: (ctx) {
+  //       return AlertDialog(
+  //         title: const Text('Dodaj wspomnienie 🌱'),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             const Text('Opisz swoje wspomnienie:'),
+  //             const SizedBox(height: 12),
+  //             TextField(
+  //               controller: opisController,
+  //               maxLines: 4,
+  //               decoration: const InputDecoration(
+  //                 border: OutlineInputBorder(),
+  //                 hintText: 'Np. spacer po lesie, zapach deszczu...',
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(ctx).pop(null); // anuluj
+  //             },
+  //             child: const Text('Anuluj'),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               final tekst = opisController.text.trim();
+  //               Navigator.of(ctx).pop(tekst); // zwróć tekst
+  //             },
+  //             child: const Text('Zapisz'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
 
-    // opisController.dispose();
+  //   // opisController.dispose();
 
-    // jeśli użytkownik coś wpisał i kliknął "Zapisz"
-    if (result != null && result.trim().isNotEmpty) {
-      debugPrint('Zapisane wspomnienie: $result');
-      // TODO: tutaj możesz dodać to wspomnienie do listy / wysłać na backend itd.
-      // np. setState(() { _memories.add(result); });
-    }
-  }
+  //   // jeśli użytkownik coś wpisał i kliknął "Zapisz"
+  //   if (result != null && result.trim().isNotEmpty) {
+  //     debugPrint('Zapisane wspomnienie: $result');
+  //     showAddMemorySheet(context);
+  //     // TODO: tutaj możesz dodać to wspomnienie do listy / wysłać na backend itd.
+  //     // np. setState(() { _memories.add(result); });
+  //   }
+  // }
+
+
+
 
   @override
   Widget build(BuildContext context) {
