@@ -54,7 +54,13 @@ class _MindGardenHomeState extends State<MindGardenHome> {
     if (!mounted) return;
 
     // 3. odpalamy dialog z BEZPIECZNEGO kontekstu (MindGardenHome)
-    showAddMemorySheet(context);
+    showAddMemorySheet(context,(memory) {
+      // co ma się stać po zapisaniu wspomnienia
+      setState(() {
+        memories.add(memory);
+      });
+    });
+
   }
 
   // osobna funkcja do obsługi dialogu – nie jest powiązana z ripple
