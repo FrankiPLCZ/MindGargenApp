@@ -2,12 +2,30 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:mind_garden/data/repository.dart';
+import 'package:mind_garden/db_page.dart';
 import 'package:mind_garden/flowers.dart';
+import 'package:mind_garden/models/db_item.dart';
 
 // globalna blokada ripple
 final ValueNotifier<bool> rippleButtonBlocked = ValueNotifier<bool>(false);
 
-void main(List<String> args) {
+final getIt = GetIt.instance;
+
+
+
+
+Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(DbItemAdapter());
+
+  await Hive.openBox<DbItem>(ItemsRepository.boxName);
+
+  getIt.registerSingleton<ItemsRepository>(ItemsRepository());
   runApp(const MindGardenApp());
 }
 
@@ -128,14 +146,7 @@ class _MindGardenHomeState extends State<MindGardenHome> {
         scrollDirection: Axis.horizontal,
         children: [
           // strona 0
-          Container(
-            color: Colors.green.shade100,
-            alignment: Alignment.center,
-            child: const Text(
-              "Hello tutaj twoje staty 🌱",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-          ),
+          DbManagementPage(),
           // strona 1
           Container(
             decoration: const BoxDecoration(

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mind_garden/data/repository.dart';
 
 /// --------------------
 ///  MODEL + ENUM
 /// --------------------
+
+final repo = GetIt.I<ItemsRepository>();
 
 enum FlowerType {
   sunflower,
@@ -321,9 +325,11 @@ class _AddMemorySheetState extends State<AddMemorySheet>
     );
   }
 
-  void _onSavePressed() {
+  Future<void> _onSavePressed() async {
     final text = controller.text.trim();
     if (text.isEmpty) return;
+    await repo.addItem(text);
+
 
     final memory = MemoryEntry(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
