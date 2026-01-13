@@ -12,11 +12,12 @@ class ItemsRepository {
   // do reaktywnego UI (nasłuch zmian)
   ValueListenable<Box<DbItem>> listenable() => _box.listenable();
 
-  Future<void> addItem(String title) async {
+  Future<void> addItem(String title, String flower) async {
     final item = DbItem(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       title: title,
       createdAtMs: DateTime.now().millisecondsSinceEpoch,
+      flowerImagePath: flower,
     );
     await _box.put(item.id, item);
   }

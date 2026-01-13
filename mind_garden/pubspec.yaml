@@ -73,6 +73,9 @@ flutter:
     - assets/holy_garden_clean.png
     - assets/Chwast1.png
     - assets/Chwast2.png
+    - assets/sunflower.png
+    - assets/rose.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

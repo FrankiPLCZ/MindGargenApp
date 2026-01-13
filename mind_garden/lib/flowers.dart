@@ -31,7 +31,24 @@ extension FlowerTypeLabels on FlowerType {
         return "Inny kwiatek";
     }
   }
+    String get assetPath {
+    switch (this) {
+      case FlowerType.sunflower:
+        return "assets/sunflower.png";
+      case FlowerType.rose:
+        return "assets/rose.png";
+      case FlowerType.lavender:
+        return "assets/sunflower.png";
+      case FlowerType.daisy:
+        return "assets/sunflower.png";
+      case FlowerType.custom:
+        return "assets/sunflower.png";
+    }
+  }
 }
+
+
+
 
 class MemoryEntry {
   final String id;
@@ -115,9 +132,11 @@ class _AddMemorySheetState extends State<AddMemorySheet>
 
           // LISTA KWIATKÓW
           SizedBox(
-            height: 80,
+            height: 90,
             child: ListView(
               scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(vertical: 2), // ✅ ZAPAS NA SCALE
+                  clipBehavior: Clip.none, // opcjonalnie, ale polecam
               children: FlowerType.values.map((flower) {
                 final isSelected = selectedFlower == flower;
 
@@ -157,13 +176,20 @@ class _AddMemorySheetState extends State<AddMemorySheet>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.local_florist),
-                          const SizedBox(height: 4),
-                          Text(
-                            flower.label,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
+                        SizedBox(
+                              width: 35,
+                              height: 35,
+                              child: Image.asset(
+                                flower.assetPath,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              flower.label,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
                       ),
                     ),
                   ),
@@ -328,7 +354,12 @@ class _AddMemorySheetState extends State<AddMemorySheet>
   Future<void> _onSavePressed() async {
     final text = controller.text.trim();
     if (text.isEmpty) return;
-    await repo.addItem(text);
+
+    final path = selectedFlower?.assetPath;
+    if (path==null) return;
+
+    await repo.addItem(text,path);
+    print(selectedFlower);
 
 
     final memory = MemoryEntry(

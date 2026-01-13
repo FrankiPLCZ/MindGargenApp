@@ -14,10 +14,14 @@ class DbItem {
   @HiveField(2)
   final int createdAtMs;
 
+  @HiveField(3)
+  final String? flowerImagePath;
+
   const DbItem({
     required this.id,
     required this.title,
     required this.createdAtMs,
+    this.flowerImagePath,
   });
 
   DateTime get createdAt => DateTime.fromMillisecondsSinceEpoch(createdAtMs);

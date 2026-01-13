@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
@@ -19,15 +21,50 @@ class _DbManagementPageState extends State<DbManagementPage> {
     super.dispose();
   }
 
+  // 🌼 Ikonka kwiatka: asset (assets/...) albo plik (ścieżka z telefonu)
+  Widget _buildFlowerIcon(String? path) {
+    if (path == null || path.isEmpty) {
+      return const SizedBox(width: 40, height: 40);
+    }
+
+    final Widget image = path.startsWith('assets/')
+        ? Image.asset(
+            path,
+            width: 32,
+            height: 32,
+            fit: BoxFit.contain,
+          )
+        : Image.file(
+            File(path),
+            width: 32,
+            height: 32,
+            fit: BoxFit.cover,
+          );
+
+    return Container(
+      width: 40,
+      height: 40,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: image,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         // 🌿 TŁO (dopasuj asset do tego widoku)
         Container(
-            color: Colors.green.shade100,
-            alignment: Alignment.center,
-          ),
+          color: Colors.green.shade100,
+          alignment: Alignment.center,
+        ),
 
         // 📜 PANEL Z LISTĄ
         SafeArea(
@@ -79,6 +116,10 @@ class _DbManagementPageState extends State<DbManagementPage> {
                         ),
                         child: Row(
                           children: [
+                            // 🌼 KWIATEK Z BAZY
+                            _buildFlowerIcon(item.flowerImagePath),
+                            const SizedBox(width: 12),
+
                             Expanded(
                               child: Text(
                                 item.title,
@@ -151,7 +192,10 @@ class _DbManagementPageState extends State<DbManagementPage> {
   Future<void> _add() async {
     final text = controller.text.trim();
     if (text.isEmpty) return;
-    await repo.addItem(text);
+
+    // TODO: tu docelowo przekaż prawdziwy path kwiatka (asset albo file)
+    await repo.addItem(text, "assets/sunflower.png");
+
     controller.clear();
   }
 }
