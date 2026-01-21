@@ -43,4 +43,15 @@ class ItemsRepository {
     items.sort((a, b) => b.createdAtMs.compareTo(a.createdAtMs));
     return items;
   }
+
+  List<DbItem> getFreshLast5() {
+  final now = DateTime.now();
+
+  final items = _box.values.where((e) {
+    return now.difference(e.createdAt) <= ttl; // <= 24h
+  }).toList();
+
+  items.sort((a, b) => b.createdAtMs.compareTo(a.createdAtMs)); // najnowsze pierwsze
+  return items.take(5).toList();
+}
 }

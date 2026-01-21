@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mind_garden/data/repository.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
 
 /// --------------------
 ///  MODEL + ENUM
@@ -84,6 +90,55 @@ class _AddMemorySheetState extends State<AddMemorySheet>
   FlowerType? selectedFlower;
   String? imagePath;
   final TextEditingController controller = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+
+Future<void> _pickCustomImage() async {
+  final ImageSource? source = await showModalBottomSheet<ImageSource>(
+    context: context,
+    builder: (_) => SafeArea(
+      child: Wrap(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.photo),
+            title: const Text('Galeria'),
+            onTap: () => Navigator.pop(context, ImageSource.gallery),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_camera),
+            title: const Text('Aparat'),
+            onTap: () => Navigator.pop(context, ImageSource.camera),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  if (source == null) return;
+
+  final XFile? picked = await _picker.pickImage(
+    source: source,
+    imageQuality: 85,
+  );
+
+  if (picked == null) return;
+
+  final dir = await getApplicationDocumentsDirectory();
+  final ext = p.extension(picked.path).isNotEmpty
+      ? p.extension(picked.path)
+      : '.jpg';
+
+  final fileName = 'memory_${DateTime.now().millisecondsSinceEpoch}$ext';
+  final savedPath = p.join(dir.path, fileName);
+
+  final savedFile = await File(picked.path).copy(savedPath);
+
+  setState(() {
+    imagePath = savedFile.path;
+    selectedFlower = FlowerType.custom;
+  });
+}
+
+
 
   late AnimationController _blastController;
   bool _isBlasting = false;
@@ -203,8 +258,7 @@ class _AddMemorySheetState extends State<AddMemorySheet>
           // ZDJĘCIE (placeholder)
           GestureDetector(
             onTap: () {
-              // TODO: podłącz image picker i ustaw imagePath
-              // np. setState(() => imagePath = pickedFile.path);
+              _pickCustomImage();
             },
             child: Container(
               height: 80,
@@ -355,11 +409,15 @@ class _AddMemorySheetState extends State<AddMemorySheet>
     final text = controller.text.trim();
     if (text.isEmpty) return;
 
-    final path = selectedFlower?.assetPath;
-    if (path==null) return;
+    final String? pathToSave =
+        (imagePath != null && imagePath!.trim().isNotEmpty)
+            ? imagePath!.trim()
+            : selectedFlower?.assetPath;
 
-    await repo.addItem(text,path);
-    print(selectedFlower);
+    if (pathToSave == null || pathToSave.isEmpty) return;
+
+    await repo.addItem(text, pathToSave);
+
 
 
     final memory = MemoryEntry(

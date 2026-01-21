@@ -20,19 +20,22 @@ class DbItemAdapter extends TypeAdapter<DbItem> {
       id: fields[0] as String,
       title: fields[1] as String,
       createdAtMs: fields[2] as int,
+      flowerImagePath: fields[3] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, DbItem obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.createdAtMs);
+      ..write(obj.createdAtMs)
+      ..writeByte(3)
+      ..write(obj.flowerImagePath);
   }
 
   @override

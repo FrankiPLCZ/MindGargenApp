@@ -8,6 +8,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:mind_garden/data/repository.dart';
 import 'package:mind_garden/db_page.dart';
 import 'package:mind_garden/flowers.dart';
+import 'package:mind_garden/holy_garden.dart';
 import 'package:mind_garden/models/db_item.dart';
 
 // globalna blokada ripple
@@ -81,63 +82,6 @@ class _MindGardenHomeState extends State<MindGardenHome> {
 
   }
 
-  // osobna funkcja do obsługi dialogu – nie jest powiązana z ripple
-  // void _openMemoryDialog() async {
-  //   final TextEditingController opisController = TextEditingController();
-
-  //   final String? result = await showDialog<String>(
-  //     context: context,
-  //     builder: (ctx) {
-  //       return AlertDialog(
-  //         title: const Text('Dodaj wspomnienie 🌱'),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             const Text('Opisz swoje wspomnienie:'),
-  //             const SizedBox(height: 12),
-  //             TextField(
-  //               controller: opisController,
-  //               maxLines: 4,
-  //               decoration: const InputDecoration(
-  //                 border: OutlineInputBorder(),
-  //                 hintText: 'Np. spacer po lesie, zapach deszczu...',
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(ctx).pop(null); // anuluj
-  //             },
-  //             child: const Text('Anuluj'),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               final tekst = opisController.text.trim();
-  //               Navigator.of(ctx).pop(tekst); // zwróć tekst
-  //             },
-  //             child: const Text('Zapisz'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-
-  //   // opisController.dispose();
-
-  //   // jeśli użytkownik coś wpisał i kliknął "Zapisz"
-  //   if (result != null && result.trim().isNotEmpty) {
-  //     debugPrint('Zapisane wspomnienie: $result');
-  //     showAddMemorySheet(context);
-  //     // TODO: tutaj możesz dodać to wspomnienie do listy / wysłać na backend itd.
-  //     // np. setState(() { _memories.add(result); });
-  //   }
-  // }
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,14 +104,7 @@ class _MindGardenHomeState extends State<MindGardenHome> {
             ),
           ),
           // strona 2
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/holy_garden_clean.png'),
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
+          GardenPage(),
         ],
       ),
     );
