@@ -35,6 +35,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   image_picker: ^1.1.2
+  image_cropper: ^11.0.0
   path_provider: ^2.1.4
   path: ^1.9.0
   cupertino_icons: ^1.0.8
@@ -79,6 +80,7 @@ flutter:
     - assets/Chwast2.png
     - assets/sunflower.png
     - assets/rose.png
+    - assets/stokrotka_cleared.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

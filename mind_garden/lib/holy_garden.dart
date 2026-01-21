@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:mind_garden/flowers.dart';
 
 import 'data/repository.dart';
 import 'models/db_item.dart';
@@ -25,6 +26,46 @@ class _GardenPageState extends State<GardenPage>
 
   @override
   bool get wantKeepAlive => true;
+
+    Widget _gardenFlower(String path, {double size = 90}) {
+    final p = path.trim();
+
+    // asset → jak było
+    if (p.startsWith('assets/')) {
+      return Image.asset(
+        p,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+      );
+    }
+
+    // file (custom) → zdjęcie w środku + ramka kwiatu
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipOval(
+            child: Image.file(
+              File(p),
+              width: size * 0.64,   // dostrój pod “dziurę” w ramce
+              height: size * 0.64,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Image.asset(
+            kCustomFrameAsset,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
+
 
   ImageProvider _imageProvider(String path) {
     final p = path.trim();
@@ -241,14 +282,10 @@ class _GardenPageState extends State<GardenPage>
                         top: h * _posById[item.id]!.dy - (flowerSize / 2),
                         child: GestureDetector(
                           onTap: () => showMemorySheet(context, item, img),
-                          child: SizedBox(
-                            width: flowerSize,
-                            height: flowerSize,
-                            child: Image(
-                              image: img,
-                              fit: BoxFit.contain,
+                            child: _gardenFlower(
+                              item.flowerImagePath!.trim(),
+                              size: flowerSize,
                             ),
-                          ),
                         ),
                       );
                     }(),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:mind_garden/data/repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
@@ -13,6 +14,8 @@ import 'package:path_provider/path_provider.dart';
 /// --------------------
 
 final repo = GetIt.I<ItemsRepository>();
+const String kCustomFrameAsset = "assets/stokrotka_cleared.png";
+
 
 enum FlowerType {
   sunflower,
@@ -48,7 +51,7 @@ extension FlowerTypeLabels on FlowerType {
       case FlowerType.daisy:
         return "assets/sunflower.png";
       case FlowerType.custom:
-        return "assets/sunflower.png";
+        return "assets/stokrotka_cleared.png";
     }
   }
 }
@@ -117,26 +120,48 @@ Future<void> _pickCustomImage() async {
 
   final XFile? picked = await _picker.pickImage(
     source: source,
-    imageQuality: 85,
+    imageQuality: 100,
   );
-
   if (picked == null) return;
 
-  final dir = await getApplicationDocumentsDirectory();
-  final ext = p.extension(picked.path).isNotEmpty
-      ? p.extension(picked.path)
-      : '.jpg';
+  // 🔽 CROP (okrąg – dokładnie jak ramka kwiatu)
+final CroppedFile? cropped = await ImageCropper().cropImage(
+  sourcePath: picked.path,
+  compressQuality: 90,
+  uiSettings: [
+    AndroidUiSettings(
+      toolbarTitle: 'Dopasuj zdjęcie',
+      toolbarColor: const Color(0xFFFFF4D6),
+      toolbarWidgetColor: Colors.black,
+      backgroundColor: Colors.black,
+      hideBottomControls: true,
+      lockAspectRatio: true,
+      cropStyle: CropStyle.circle, // ✅ tutaj
+    ),
+    IOSUiSettings(
+      title: 'Dopasuj zdjęcie',
+      aspectRatioLockEnabled: true,
+      cropStyle: CropStyle.circle, // ✅ i tutaj
+    ),
+  ],
+);
 
-  final fileName = 'memory_${DateTime.now().millisecondsSinceEpoch}$ext';
+
+  if (cropped == null) return;
+
+  // 🔽 zapis do Documents (trwała ścieżka)
+  final dir = await getApplicationDocumentsDirectory();
+  final fileName = 'memory_${DateTime.now().millisecondsSinceEpoch}.jpg';
   final savedPath = p.join(dir.path, fileName);
 
-  final savedFile = await File(picked.path).copy(savedPath);
+  final savedFile = await File(cropped.path).copy(savedPath);
 
   setState(() {
     imagePath = savedFile.path;
     selectedFlower = FlowerType.custom;
   });
 }
+
 
 
 
@@ -231,14 +256,23 @@ Future<void> _pickCustomImage() async {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        SizedBox(
-                              width: 35,
-                              height: 35,
-                              child: Image.asset(
-                                flower.assetPath,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
+                          SizedBox(
+                            width: 35,
+                            height: 35,
+                            child: (flower == FlowerType.custom &&
+                                    imagePath != null &&
+                                    imagePath!.trim().isNotEmpty)
+                                ? _customFlowerFramePreview(
+                                    frameAssetPath: flower.assetPath,
+                                    imagePath: imagePath!.trim(),
+                                    size: 56, // możesz dać 54–62 pod gust
+                                  )
+                                : Image.asset(
+                                    flower.assetPath,
+                                    fit: BoxFit.contain,
+                                  ),
+                          ),
+                          
                             const SizedBox(height: 6),
                             Text(
                               flower.label,
@@ -266,13 +300,16 @@ Future<void> _pickCustomImage() async {
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Center(
-                child: Text(
-                  imagePath == null
-                      ? "Dodaj własne zdjęcie 📸"
-                      : "Zdjęcie dodane ✔️",
-                ),
-              ),
+                  child: Center(
+                    child: imagePath == null
+                        ? const Text("Dodaj własne zdjęcie 📸")
+                        : _customFlowerFramePreview(
+                            frameAssetPath: FlowerType.custom.assetPath,
+                            imagePath: imagePath!.trim(),
+                            size: 80,
+                          ),
+                  ),
+
             ),
           ),
 
@@ -404,6 +441,40 @@ Future<void> _pickCustomImage() async {
       ),
     );
   }
+
+  Widget _customFlowerFramePreview({
+  required String frameAssetPath,
+  required String imagePath,
+  double size = 56,
+}) {
+  return SizedBox(
+    width: size,
+    height: size,
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        // Zdjęcie wypełnia środek (okrąg)
+        ClipOval(
+          child: Image.file(
+            File(imagePath),
+            width: size * 0.62,   // dostosuj jeśli trzeba
+            height: size * 0.62,  // dostosuj jeśli trzeba
+            fit: BoxFit.cover,
+          ),
+        ),
+
+        // Ramka kwiatu na wierzchu
+        Image.asset(
+          frameAssetPath,
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+        ),
+      ],
+    ),
+  );
+}
+
 
   Future<void> _onSavePressed() async {
     final text = controller.text.trim();
