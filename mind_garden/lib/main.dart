@@ -329,7 +329,7 @@ class _RippleButtonState extends State<RippleButton>
     });
 
     _controller.forward(from: 0);
-
+    await _audioPlayer.setVolume(0.5);
     await _audioPlayer.play(AssetSource('gong1.wav'));
 
     Future.delayed(const Duration(milliseconds: 1500), () {
