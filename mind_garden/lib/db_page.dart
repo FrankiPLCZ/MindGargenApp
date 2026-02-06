@@ -352,7 +352,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
                       child: TextField(
                         controller: controller,
                         decoration: InputDecoration(
-                          hintText: 'Dodaj wpis...',
+                          hintText: 'Dodaj ulubione wspomnienia...',
                           hintStyle: TextStyle(color: _textDark.withOpacity(0.45)),
                           border: InputBorder.none,
                         ),

@@ -201,10 +201,46 @@ class _RippleSpawnerState extends State<RippleSpawner>
           right: 0,
           bottom: 32,
           child: Center(
-            child: ElevatedButton(
-              onPressed: _spawnRipple,
-              child: const Text('Dodaj guzik'),
-            ),
+            child:         ElevatedButton(
+  onPressed: _spawnRipple, // albo () {}, jeśli nie używasz callbacka
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFFF0E6C8), // jasny kamień
+    foregroundColor: const Color(0xFF4E412A), // tekst
+    elevation: 3,
+    shadowColor: const Color(0xFFB09A6A),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 28,
+      vertical: 14,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(14),
+      side: const BorderSide(
+        color: Color(0xFF9E8757), // kontrastowa obwódka
+        width: 2,
+      ),
+    ),
+  ),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Image.asset(
+        'assets/Chwast1.png', // rysunkowa emotka chwasta
+        width: 22,
+        height: 22,
+      ),
+      const SizedBox(width: 10),
+      const Text(
+        'Dodaj chwast',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          height: 1.1,
+        ),
+      ),
+    ],
+  ),
+)
+,
           ),
         ),
       ],

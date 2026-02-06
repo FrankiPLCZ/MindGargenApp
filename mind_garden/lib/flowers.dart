@@ -205,7 +205,7 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Dodaj wspomnienie 🌼",
+            "Zasiej świadomą myśl 🌼",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
@@ -320,7 +320,7 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
             controller: controller,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: "Opisz swoje wspomnienie...",
+              hintText: "Opisz swoją myśl...",
               filled: true,
               fillColor: const Color(0xffFFF1C7),
               border: OutlineInputBorder(

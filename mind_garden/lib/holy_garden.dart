@@ -255,11 +255,39 @@ class _GardenPageState extends State<GardenPage>
             _reconcilePositions(items);
 
             if (items.isEmpty) {
-              return const Center(
-                child: Text(
-                  'Brak kwiatów z ostatnich 24h 🌱',
-                  style: TextStyle(fontSize: 16),
-                ),
+              return Center(
+                child: Container(
+  padding: const EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 14,
+  ),
+  decoration: BoxDecoration(
+    color: const Color(0xFFFFF6D8), // bardzo jasny krem
+    borderRadius: BorderRadius.circular(18),
+    border: Border.all(
+      color: const Color(0xFFE2D3A3), // ciepła ramka
+      width: 2,
+    ),
+    boxShadow: const [
+      BoxShadow(
+        color: Color(0x33000000),
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+  ),
+  child: const Text(
+    'Brak kwiatów z ostatnich 24h 🌱',
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      height: 1.4,
+      color: Color(0xFF5A5A2E), // oliwkowy, nie czarny
+    ),
+  ),
+)
+,
               );
             }
 
