@@ -41,29 +41,35 @@ class _GardenPageState extends State<GardenPage>
     }
 
     // file (custom) → zdjęcie w środku + ramka kwiatu
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          ClipOval(
+return SizedBox(
+  width: size,
+  height: size,
+  child: Stack(
+    alignment: Alignment.center,
+    children: [
+      Transform.translate(
+        offset: Offset(0, -size * 0.18), // 👈 przesunięcie do środka kwiatu
+        child: SizedBox(
+          width: size * 0.40,
+          height: size * 0.40,
+          child: ClipOval(
             child: Image.file(
               File(p),
-              width: size * 0.64,   // dostrój pod “dziurę” w ramce
-              height: size * 0.64,
               fit: BoxFit.cover,
             ),
           ),
-          Image.asset(
-            kCustomFrameAsset,
-            width: size,
-            height: size,
-            fit: BoxFit.contain,
-          ),
-        ],
+        ),
       ),
-    );
+
+      Image.asset(
+        kCustomFrameAsset,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+      ),
+    ],
+  ),
+);
   }
 
 
