@@ -344,7 +344,7 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
             ),
             onPressed: _isBlasting ? null : _onSavePressed,
             child: const Text(
-              "Zapisz wspomnienie",
+              "Zapisz myśl",
               style: TextStyle(fontSize: 18),
             ),
           ),
