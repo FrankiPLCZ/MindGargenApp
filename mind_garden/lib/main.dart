@@ -10,6 +10,8 @@ import 'package:mind_garden/db_page.dart';
 import 'package:mind_garden/flowers.dart';
 import 'package:mind_garden/holy_garden.dart';
 import 'package:mind_garden/models/db_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 // globalna blokada ripple
 final ValueNotifier<bool> rippleButtonBlocked = ValueNotifier<bool>(false);
@@ -39,10 +41,326 @@ class MindGardenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: MindGardenHome(),
+      home: FirstLaunchGate(),
     );
   }
 }
+
+class FirstLaunchGate extends StatefulWidget {
+  const FirstLaunchGate({super.key});
+
+  @override
+  State<FirstLaunchGate> createState() => _FirstLaunchGateState();
+}
+
+class _FirstLaunchGateState extends State<FirstLaunchGate> {
+  static const _firstLaunchKey = 'is_first_launch_done';
+  bool? _shouldShowOnboarding;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFirstLaunchState();
+  }
+
+  Future<void> _loadFirstLaunchState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final firstLaunchDone = prefs.getBool(_firstLaunchKey) ?? false;
+
+    if (!mounted) return;
+    setState(() {
+      _shouldShowOnboarding = !firstLaunchDone;
+    });
+  }
+
+  Future<void> _finishOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_firstLaunchKey, true);
+
+    if (!mounted) return;
+    setState(() {
+      _shouldShowOnboarding = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_shouldShowOnboarding == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_shouldShowOnboarding == true) {
+      return OnboardingPage(onFinish: _finishOnboarding);
+    }
+
+    return const MindGardenHome();
+  }
+}
+
+class OnboardingPage extends StatefulWidget {
+  final Future<void> Function() onFinish;
+
+  const OnboardingPage({super.key, required this.onFinish});
+
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  double _lastPageValue = 0;
+  int _scrollDirection = 1;
+
+  final List<({
+    String title,
+    String description,
+    IconData icon,
+    String backgroundAsset,
+    bool enterFromRight,
+  })> _pages = [
+    (
+      title: 'Witaj w Mind Garden',
+      description:
+          'Chwasty to twoje nieświadome myśli, zamieniaj je codziennie w piękne kwiaty aż twój ogród rozkwitnie i zmieni twoje życie w świadome bycie tu i teraz',
+      icon: Icons.spa_outlined,
+      backgroundAsset: 'assets/background_clean.png',
+      enterFromRight: true,
+    ),
+    (
+      title: 'Dodawaj chwasty',
+      description:
+          'Na głównym ekranie kliknij „Dodaj chwast”. Pojawi się chwast, który reprezentuje myśl do przepracowania.',
+      icon: Icons.add_circle_outline,
+      backgroundAsset: 'assets/background_clean_slide1_5.png',
+      enterFromRight: true,
+    ),
+    (
+      title: 'Pracuj z emocją',
+      description:
+          'Kliknij chwast, aby przejść dalej i zastąpić go pięknym wspomnieniem. Po zapisie zobaczysz je w swoim ogrodzie.',
+      icon: Icons.self_improvement_outlined,
+      backgroundAsset: 'assets/background_clean_slide2.png',
+      enterFromRight: true,
+    ),
+        (
+      title: 'Dbaj o swój ogród',
+      description:
+          'W ogrodzie wyświetlają się kwiaty dodane w ostatnich 24h. Dbaj o to aby twój ogród był zawsze pełny a umysł spokojny',
+      icon: Icons.local_florist,
+      backgroundAsset: 'assets/holy_garden.png',
+      enterFromRight: true,
+    ),
+        (
+      title: 'Zarządzaj swoimi kwiatami',
+      description:
+          'W panelu z lewej strony przeglądaj lub usuwaj swoje kwiaty',
+      icon: Icons.agriculture,
+      backgroundAsset: 'assets/db_background.png',
+      enterFromRight: false,
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _nextOrFinish() async {
+    if (_currentPage == _pages.length - 1) {
+      await widget.onFinish();
+      return;
+    }
+
+    await _pageController.nextPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Widget _buildAnimatedBackground() {
+    return AnimatedBuilder(
+      animation: _pageController,
+      builder: (context, child) {
+        double page = _currentPage.toDouble();
+
+        if (_pageController.hasClients) {
+          page = _pageController.page ?? _currentPage.toDouble();
+        }
+
+        final clampedPage = page.clamp(0.0, (_pages.length - 1).toDouble());
+
+        if (clampedPage > _lastPageValue) {
+          _scrollDirection = 1;
+        } else if (clampedPage < _lastPageValue) {
+          _scrollDirection = -1;
+        }
+        _lastPageValue = clampedPage;
+
+        final lowerIndex = clampedPage.floor();
+        final upperIndex = clampedPage.ceil();
+        final transition = clampedPage - lowerIndex;
+
+        int currentIndex = lowerIndex;
+        int nextIndex = upperIndex;
+        double progress = transition;
+
+        if (_scrollDirection < 0) {
+          currentIndex = upperIndex;
+          nextIndex = lowerIndex;
+          progress = 1 - transition;
+        }
+
+        final nextEntersFromRight = _pages[nextIndex].enterFromRight;
+        final beginOffsetX = nextEntersFromRight ? 1.0 : -1.0;
+
+        return ClipRect(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.asset(
+                _pages[currentIndex].backgroundAsset,
+                fit: BoxFit.fill,
+              ),
+              if (nextIndex != currentIndex)
+                FractionalTranslation(
+                  translation: Offset(beginOffsetX * (1 - progress), 0),
+                  child: Opacity(
+                    opacity: progress,
+                    child: Image.asset(
+                      _pages[nextIndex].backgroundAsset,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          _buildAnimatedBackground(),
+          Container(
+            color: Colors.black.withOpacity(0.08),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: widget.onFinish,
+                    child: const Text('Pomiń'),
+                  ),
+                ),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: _pages.length,
+                    onPageChanged: (value) {
+                      setState(() {
+                        _currentPage = value;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      final page = _pages[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.88),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 12,
+                                  offset: Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(page.icon,
+                                    size: 52, color: Colors.green[700]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  page.title,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  page.description,
+                                  textAlign: TextAlign.center,
+                                  style:
+                                      const TextStyle(fontSize: 16, height: 1.4),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _pages.length,
+                    (index) => Container(
+                      width: 10,
+                      height: 10,
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: index == _currentPage
+                            ? Colors.green[700]
+                            : Colors.green[200],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: ElevatedButton(
+                    onPressed: _nextOrFinish,
+                    child: Text(
+                      _currentPage == _pages.length - 1
+                          ? 'Zaczynajmy'
+                          : 'Dalej',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+}
+
+
 
 // ---------------------------
 //       HOME (PageView)
@@ -110,6 +428,7 @@ class _MindGardenHomeState extends State<MindGardenHome> {
     );
   }
 }
+
 
 // ---------------------------
 //       RIPPLE SPAWNER

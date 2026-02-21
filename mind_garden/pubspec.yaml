@@ -43,6 +43,7 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   get_it: ^7.7.0
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -75,11 +76,18 @@ flutter:
   assets:
     - assets/gong1.wav
     - assets/background_clean.png
+    - assets/background_clean_slide1_5.png
+    - assets/background_clean_slide2.png
+    - assets/background_dirty.png
     - assets/holy_garden_clean.png
+    - assets/holy_garden.png
+    - assets/db_background.png
     - assets/Chwast1.png
     - assets/Chwast2.png
     - assets/sunflower.png
     - assets/rose.png
+    - assets/lavender1.png
+    - assets/tulip.png
     - assets/stokrotka_cleared.png
 
 

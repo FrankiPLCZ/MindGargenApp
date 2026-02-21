@@ -21,7 +21,7 @@ enum FlowerType {
   sunflower,
   rose,
   lavender,
-  daisy,
+  tulip,
   custom,
 }
 
@@ -34,8 +34,8 @@ extension FlowerTypeLabels on FlowerType {
         return "Róża";
       case FlowerType.lavender:
         return "Lawenda";
-      case FlowerType.daisy:
-        return "Stokrotka";
+      case FlowerType.tulip:
+        return "Tulipan";
       case FlowerType.custom:
         return "Inny kwiatek";
     }
@@ -47,9 +47,9 @@ extension FlowerTypeLabels on FlowerType {
       case FlowerType.rose:
         return "assets/rose.png";
       case FlowerType.lavender:
-        return "assets/sunflower.png";
-      case FlowerType.daisy:
-        return "assets/sunflower.png";
+        return "assets/lavender1.png";
+      case FlowerType.tulip:
+        return "assets/tulip.png";
       case FlowerType.custom:
         return "assets/stokrotka_cleared.png";
     }
@@ -217,7 +217,7 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
               scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(vertical: 2), // ✅ ZAPAS NA SCALE
                   clipBehavior: Clip.none, // opcjonalnie, ale polecam
-              children: FlowerType.values.map((flower) {
+              children: FlowerType.values.take(FlowerType.values.length - 1).map((flower) {
                 final isSelected = selectedFlower == flower;
 
                 return GestureDetector(
@@ -453,15 +453,20 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
     child: Stack(
       alignment: Alignment.center,
       children: [
-        // Zdjęcie wypełnia środek (okrąg)
-        ClipOval(
+              Transform.translate(
+        offset: Offset(0, -size * 0.18),
+        child: SizedBox(
+          width: size * 0.40,
+          height: size * 0.40,
+        child: ClipOval(
           child: Image.file(
             File(imagePath),
-            width: size * 0.62,   // dostosuj jeśli trzeba
-            height: size * 0.62,  // dostosuj jeśli trzeba
+ // dostosuj jeśli trzeba
             fit: BoxFit.cover,
           ),
         ),
+              ),
+              ),
 
         // Ramka kwiatu na wierzchu
         Image.asset(
