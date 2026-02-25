@@ -1,56 +1,84 @@
+# Privacy Policy  
+**for Mind Garden**
 
-Last updated: 25.02.2026
+_Last updated: 25.02.2026_
 
-1. Introduction
+---
 
-This Privacy Policy describes how Mind Garden ("the App") handles user information.
+## 1. Overview
 
-Your privacy is important. This application is designed to function entirely offline and does not collect or transmit personal data.
+Thank you for using **Mind Garden**.
 
-2. Data Collection
+Your privacy is important. This application is designed to function entirely offline and does not collect, store, transmit, or share any personal data.
 
-The App does not collect, store, transmit, or share any personal data.
+---
 
-All information entered by users — including diary entries, text content, and attached images — is stored locally on the user's device only.
+## 2. Data Collection
 
-No data is sent to the developer or any third parties.
+**Mind Garden does not collect any user data.**
 
-3. Internet Connectivity
+All information entered into the application, including:
 
-The App does not require an internet connection to function.
+- Diary entries  
+- Text content  
+- Images attached to entries  
 
-It does not connect to external servers and does not transmit any user data.
+is stored **locally on the user's device only**.
 
-4. Third-Party Services
+No data is transmitted to the developer or any third parties.
 
-The App does not use:
+---
 
-Analytics services
+## 3. Internet Access
 
-Advertising networks
+This application:
 
-Crash reporting tools
+- Does not require an internet connection  
+- Does not connect to external servers  
+- Does not transmit any user information  
 
-Cloud storage
+All features operate fully offline.
 
-External SDKs that collect user data
+---
 
-5. Data Security
+## 4. Third-Party Services
 
-Since all data is stored locally on the user's device, users are responsible for securing their device and managing backups.
+The application does **not** use:
 
-The developer has no access to user data.
+- Analytics services  
+- Advertising networks  
+- Crash reporting tools  
+- Cloud storage  
+- External SDKs that collect user data  
 
-6. Children's Privacy
+---
 
-The App does not knowingly collect personal information from anyone, including children under 13, because no data is collected at all.
+## 5. Data Security
 
-7. Changes to This Privacy Policy
+Since all data is stored locally on the user’s device:
 
-If the App’s functionality changes in the future (for example, if online features are added), this Privacy Policy will be updated accordingly.
+- The developer has no access to user data  
+- Users are responsible for securing their device  
+- Users are responsible for managing backups  
 
-8. Contact
+---
 
-If you have any questions about this Privacy Policy, you may contact:
+## 6. Children's Privacy
 
-Email: ppptomasik@gmail.com
+This application does not knowingly collect personal information from anyone, including children under 13 years of age, because no data is collected at all.
+
+---
+
+## 7. Changes to This Privacy Policy
+
+If future updates introduce features that involve data collection or internet connectivity, this Privacy Policy will be updated accordingly.
+
+---
+
+## 8. Contact
+
+If you have any questions regarding this Privacy Policy, please contact:
+
+**Email:** ppptomasik@gmail.com
+
+---
