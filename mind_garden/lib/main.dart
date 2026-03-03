@@ -374,10 +374,9 @@ class MindGardenHome extends StatefulWidget {
 
 class _MindGardenHomeState extends State<MindGardenHome> {
   final PageController _controller = PageController(initialPage: 1);
+  int _pageIndex = 1;
 
-  // wywoływane z ripple (strona 1)
   void _goToPage2() async {
-    // 1. animacja do strony 2
     await _controller.animateToPage(
       2,
       duration: const Duration(milliseconds: 500),
@@ -386,44 +385,58 @@ class _MindGardenHomeState extends State<MindGardenHome> {
 
     if (!mounted) return;
 
-    // 2. małe opóźnienie, żeby mieć pewność, że wszystko się przerysowało
     await Future.delayed(const Duration(milliseconds: 100));
     if (!mounted) return;
 
-    // 3. odpalamy dialog z BEZPIECZNEGO kontekstu (MindGardenHome)
-    showAddMemorySheet(context,(memory) {
-      // co ma się stać po zapisaniu wspomnienia
+    showAddMemorySheet(context, (memory) {
       setState(() {
         memories.add(memory);
       });
     });
+  }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _controller,
-        scrollDirection: Axis.horizontal,
-        children: [
-          // strona 0
-          DbManagementPage(),
-          // strona 1
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background_clean.png'),
-                fit: BoxFit.fill,
+    return PopScope(
+      // pozwól wyjść z apki tylko, gdy jesteś na stronie głównej (1)
+      canPop: _pageIndex == 1,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+
+        // jeśli jesteś na 2 → wróć na 1, a jeśli na 0 → też wróć na 1
+        _controller.animateToPage(
+          1,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      },
+      child: Scaffold(
+        body: PageView(
+          controller: _controller,
+          scrollDirection: Axis.horizontal,
+          onPageChanged: (i) => setState(() => _pageIndex = i),
+          children: [
+            DbManagementPage(), // 0
+            Container(          // 1
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/background_clean.png'),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              child: RippleSpawner(
+                onGoToPage2: _goToPage2,
               ),
             ),
-            child: RippleSpawner(
-              onGoToPage2: _goToPage2,
-            ),
-          ),
-          // strona 2
-          GardenPage(),
-        ],
+            GardenPage(),       // 2
+          ],
+        ),
       ),
     );
   }
@@ -459,7 +472,7 @@ class _RippleSpawnerState extends State<RippleSpawner>
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Limit osiągnięty'),
-          content: const Text('Możesz mieć tylko 5 aktywnych guzików naraz.'),
+          content: const Text('Pracuj nad maksymalnie pięcioma myślami naraz'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -518,7 +531,7 @@ class _RippleSpawnerState extends State<RippleSpawner>
         Positioned(
           left: 0,
           right: 0,
-          bottom: 32,
+          bottom: MediaQuery.of(context).padding.bottom + 16,
           child: Center(
             child:         ElevatedButton(
   onPressed: _spawnRipple, // albo () {}, jeśli nie używasz callbacka
