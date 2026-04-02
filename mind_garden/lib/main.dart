@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
+
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -9,13 +10,12 @@ import 'package:mind_garden/data/repository.dart';
 import 'package:mind_garden/db_page.dart';
 import 'package:mind_garden/flowers.dart';
 import 'package:mind_garden/holy_garden.dart';
+import 'package:mind_garden/l10n/app_localizations.dart';
 import 'package:mind_garden/models/db_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 // globalna blokada ripple
 final ValueNotifier<bool> rippleButtonBlocked = ValueNotifier<bool>(false);
-
 final getIt = GetIt.instance;
 
 
@@ -40,8 +40,11 @@ class MindGardenApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: FirstLaunchGate(),
+    return MaterialApp(
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: const FirstLaunchGate(),
     );
   }
 }
@@ -69,7 +72,7 @@ class _FirstLaunchGateState extends State<FirstLaunchGate> {
 
     if (!mounted) return;
     setState(() {
-      _shouldShowOnboarding = !firstLaunchDone;
+      _shouldShowOnboarding = true;
     });
   }
 
@@ -116,54 +119,51 @@ class _OnboardingPageState extends State<OnboardingPage> {
   double _lastPageValue = 0;
   int _scrollDirection = 1;
 
-  final List<({
+  // Teksty onboardingu trzymamy w ARB, ale struktura slajdów zostaje w kodzie.
+  List<({
     String title,
     String description,
     IconData icon,
     String backgroundAsset,
     bool enterFromRight,
-  })> _pages = [
-    (
-      title: 'Witaj w Mind Garden',
-      description:
-          'Chwasty to twoje nieświadome myśli, zamieniaj je codziennie w piękne kwiaty aż twój ogród rozkwitnie i zmieni twoje życie w świadome bycie tu i teraz',
-      icon: Icons.spa_outlined,
-      backgroundAsset: 'assets/background_clean.png',
-      enterFromRight: true,
-    ),
-    (
-      title: 'Dodawaj chwasty',
-      description:
-          'Na głównym ekranie kliknij „Dodaj chwast”. Pojawi się chwast, który reprezentuje myśl do przepracowania.',
-      icon: Icons.add_circle_outline,
-      backgroundAsset: 'assets/background_clean_slide1_5.png',
-      enterFromRight: true,
-    ),
-    (
-      title: 'Pracuj z emocją',
-      description:
-          'Kliknij chwast, aby przejść dalej i zastąpić go pięknym wspomnieniem. Po zapisie zobaczysz je w swoim ogrodzie.',
-      icon: Icons.self_improvement_outlined,
-      backgroundAsset: 'assets/background_clean_slide2.png',
-      enterFromRight: true,
-    ),
+  })> _pages(AppLocalizations l10n) =>
+      [
         (
-      title: 'Dbaj o swój ogród',
-      description:
-          'W ogrodzie wyświetlają się kwiaty dodane w ostatnich 24h. Dbaj o to aby twój ogród był zawsze pełny a umysł spokojny',
-      icon: Icons.local_florist,
-      backgroundAsset: 'assets/holy_garden.png',
-      enterFromRight: true,
-    ),
+          title: l10n.mainOnboardingWelcomeTitle,
+          description: l10n.mainOnboardingWelcomeDescription,
+          icon: Icons.spa_outlined,
+          backgroundAsset: 'assets/background_clean.png',
+          enterFromRight: true,
+        ),
         (
-      title: 'Zarządzaj swoimi kwiatami',
-      description:
-          'W panelu z lewej strony przeglądaj lub usuwaj swoje kwiaty',
-      icon: Icons.agriculture,
-      backgroundAsset: 'assets/db_background.png',
-      enterFromRight: false,
-    ),
-  ];
+          title: l10n.mainOnboardingAddWeedsTitle,
+          description: l10n.mainOnboardingAddWeedsDescription,
+          icon: Icons.add_circle_outline,
+          backgroundAsset: 'assets/background_clean_slide1_5.png',
+          enterFromRight: true,
+        ),
+        (
+          title: l10n.mainOnboardingWorkWithEmotionTitle,
+          description: l10n.mainOnboardingWorkWithEmotionDescription,
+          icon: Icons.self_improvement_outlined,
+          backgroundAsset: 'assets/background_clean_slide2.png',
+          enterFromRight: true,
+        ),
+        (
+          title: l10n.mainOnboardingCareGardenTitle,
+          description: l10n.mainOnboardingCareGardenDescription,
+          icon: Icons.local_florist,
+          backgroundAsset: 'assets/holy_garden.png',
+          enterFromRight: true,
+        ),
+        (
+          title: l10n.mainOnboardingManageFlowersTitle,
+          description: l10n.mainOnboardingManageFlowersDescription,
+          icon: Icons.agriculture,
+          backgroundAsset: 'assets/db_background.png',
+          enterFromRight: false,
+        ),
+      ];
 
   @override
   void dispose() {
@@ -172,7 +172,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _nextOrFinish() async {
-    if (_currentPage == _pages.length - 1) {
+    final pages = _pages(AppLocalizations.of(context)!);
+    if (_currentPage == pages.length - 1) {
       await widget.onFinish();
       return;
     }
@@ -187,13 +188,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return AnimatedBuilder(
       animation: _pageController,
       builder: (context, child) {
+        final pages = _pages(AppLocalizations.of(context)!);
         double page = _currentPage.toDouble();
 
         if (_pageController.hasClients) {
           page = _pageController.page ?? _currentPage.toDouble();
         }
 
-        final clampedPage = page.clamp(0.0, (_pages.length - 1).toDouble());
+        final clampedPage = page.clamp(0.0, (pages.length - 1).toDouble());
 
         if (clampedPage > _lastPageValue) {
           _scrollDirection = 1;
@@ -216,7 +218,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           progress = 1 - transition;
         }
 
-        final nextEntersFromRight = _pages[nextIndex].enterFromRight;
+        final nextEntersFromRight = pages[nextIndex].enterFromRight;
         final beginOffsetX = nextEntersFromRight ? 1.0 : -1.0;
 
         return ClipRect(
@@ -224,7 +226,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             fit: StackFit.expand,
             children: [
               Image.asset(
-                _pages[currentIndex].backgroundAsset,
+                pages[currentIndex].backgroundAsset,
                 fit: BoxFit.fill,
               ),
               if (nextIndex != currentIndex)
@@ -233,7 +235,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: Opacity(
                     opacity: progress,
                     child: Image.asset(
-                      _pages[nextIndex].backgroundAsset,
+                      pages[nextIndex].backgroundAsset,
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -247,6 +249,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final pages = _pages(l10n);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -262,20 +267,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: widget.onFinish,
-                    child: const Text('Pomiń'),
+                    child: Text(l10n.commonSkip),
                   ),
                 ),
                 Expanded(
                   child: PageView.builder(
                     controller: _pageController,
-                    itemCount: _pages.length,
+                    itemCount: pages.length,
                     onPageChanged: (value) {
                       setState(() {
                         _currentPage = value;
                       });
                     },
                     itemBuilder: (context, index) {
-                      final page = _pages[index];
+                      final page = pages[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Center(
@@ -295,8 +300,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(page.icon,
-                                    size: 52, color: Colors.green[700]),
+                                Icon(
+                                  page.icon,
+                                  size: 52,
+                                  color: Colors.green[700],
+                                ),
                                 const SizedBox(height: 16),
                                 Text(
                                   page.title,
@@ -310,8 +318,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                 Text(
                                   page.description,
                                   textAlign: TextAlign.center,
-                                  style:
-                                      const TextStyle(fontSize: 16, height: 1.4),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    height: 1.4,
+                                  ),
                                 ),
                               ],
                             ),
@@ -324,7 +334,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
-                    _pages.length,
+                    pages.length,
                     (index) => Container(
                       width: 10,
                       height: 10,
@@ -344,9 +354,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: ElevatedButton(
                     onPressed: _nextOrFinish,
                     child: Text(
-                      _currentPage == _pages.length - 1
-                          ? 'Zaczynajmy'
-                          : 'Dalej',
+                      _currentPage == pages.length - 1
+                          ? l10n.commonStart
+                          : l10n.commonNext,
                     ),
                   ),
                 ),
@@ -357,10 +367,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     );
   }
-
 }
-
-
 
 // ---------------------------
 //       HOME (PageView)
@@ -404,12 +411,12 @@ class _MindGardenHomeState extends State<MindGardenHome> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      // pozwól wyjść z apki tylko, gdy jesteś na stronie głównej (1)
+      // pozwól wyjść z apki tylko, gdy jesteś na stronie głównej
       canPop: _pageIndex == 1,
       onPopInvoked: (didPop) {
         if (didPop) return;
 
-        // jeśli jesteś na 2 → wróć na 1, a jeśli na 0 → też wróć na 1
+        // Na bocznych stronach cofnięcie wraca do ekranu głównego.
         _controller.animateToPage(
           1,
           duration: const Duration(milliseconds: 250),
@@ -422,8 +429,8 @@ class _MindGardenHomeState extends State<MindGardenHome> {
           scrollDirection: Axis.horizontal,
           onPageChanged: (i) => setState(() => _pageIndex = i),
           children: [
-            DbManagementPage(), // 0
-            Container(          // 1
+            const DbManagementPage(), // 0
+            Container( // 1
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/background_clean.png'),
@@ -434,14 +441,13 @@ class _MindGardenHomeState extends State<MindGardenHome> {
                 onGoToPage2: _goToPage2,
               ),
             ),
-            GardenPage(),       // 2
+            const GardenPage(), // 2
           ],
         ),
       ),
     );
   }
 }
-
 
 // ---------------------------
 //       RIPPLE SPAWNER
@@ -467,16 +473,18 @@ class _RippleSpawnerState extends State<RippleSpawner>
   bool get wantKeepAlive => true;
 
   void _spawnRipple() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_ripples.length >= 5) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Limit osiągnięty'),
-          content: const Text('Pracuj nad maksymalnie pięcioma myślami naraz'),
+          title: Text(l10n.mainDialogLimitReachedTitle),
+          content: Text(l10n.mainDialogLimitReachedMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: Text(l10n.commonOk),
             ),
           ],
         ),
@@ -514,7 +522,8 @@ class _RippleSpawnerState extends State<RippleSpawner>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // ważne przy AutomaticKeepAliveClientMixin
+    super.build(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -533,46 +542,45 @@ class _RippleSpawnerState extends State<RippleSpawner>
           right: 0,
           bottom: MediaQuery.of(context).padding.bottom + 16,
           child: Center(
-            child:         ElevatedButton(
-  onPressed: _spawnRipple, // albo () {}, jeśli nie używasz callbacka
-  style: ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFFF0E6C8), // jasny kamień
-    foregroundColor: const Color(0xFF4E412A), // tekst
-    elevation: 3,
-    shadowColor: const Color(0xFFB09A6A),
-    padding: const EdgeInsets.symmetric(
-      horizontal: 28,
-      vertical: 14,
-    ),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(14),
-      side: const BorderSide(
-        color: Color(0xFF9E8757), // kontrastowa obwódka
-        width: 2,
-      ),
-    ),
-  ),
-  child: Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Image.asset(
-        'assets/Chwast1.png', // rysunkowa emotka chwasta
-        width: 22,
-        height: 22,
-      ),
-      const SizedBox(width: 10),
-      const Text(
-        'Dodaj chwast',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          height: 1.1,
-        ),
-      ),
-    ],
-  ),
-)
-,
+              child: ElevatedButton(
+                onPressed: _spawnRipple,
+                style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFF0E6C8),
+                foregroundColor: const Color(0xFF4E412A),
+                elevation: 3,
+                shadowColor: const Color(0xFFB09A6A),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: const BorderSide(
+                    color: Color(0xFF9E8757),
+                    width: 2,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/Chwast1.png', // rysunkowa emotka chwasta
+                    width: 22,
+                    height: 22,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    l10n.mainHomeAddWeed,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      height: 1.1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ],
@@ -627,17 +635,16 @@ class _RippleButtonState extends State<RippleButton>
 
   void _startRipple(TapDownDetails details) async {
     if (rippleButtonBlocked.value) {
+      final l10n = AppLocalizations.of(context)!;
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Uwaga'),
-          content: const Text(
-            'Skup się na jednej myśli naraz. Poczekaj 10 sekund przed kolejnym kliknięciem.',
-          ),
+          title: Text(l10n.mainDialogAttentionTitle),
+          content: Text(l10n.mainDialogAttentionMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              child: Text(l10n.commonOk),
             ),
           ],
         ),
@@ -650,7 +657,7 @@ class _RippleButtonState extends State<RippleButton>
       rippleButtonBlocked.value = false;
     });
 
-    // po 1 sekundzie: przejście na stronę 2 + dialog (logika w _goToPage2)
+    // Po chwili przechodzimy do kolejnej strony i otwieramy arkusz dodawania.
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) widget.onGoToPage2();
     });
@@ -752,9 +759,9 @@ class RipplePainter extends CustomPainter {
 //   PRZYPISANE POZYCJE
 // ---------------------------
 final List<Offset> buttonPositions = [
-  Offset(0.25, 0.75),
-  Offset(0.5, 0.5),
-  Offset(0.7, 0.4),
-  Offset(0.72, 0.58),
-  Offset(0.54, 0.68),
+  const Offset(0.25, 0.75),
+  const Offset(0.5, 0.5),
+  const Offset(0.7, 0.4),
+  const Offset(0.72, 0.58),
+  const Offset(0.54, 0.68),
 ];

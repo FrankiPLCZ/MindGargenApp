@@ -3,19 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:mind_garden/data/repository.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mind_garden/data/repository.dart';
+import 'package:mind_garden/l10n/app_localizations.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-
 
 /// --------------------
 ///  MODEL + ENUM
 /// --------------------
-
 final repo = GetIt.I<ItemsRepository>();
-const String kCustomFrameAsset = "assets/stokrotka_cleared.png";
-
+const String kCustomFrameAsset = 'assets/stokrotka_cleared.png';
 
 enum FlowerType {
   sunflower,
@@ -26,38 +24,36 @@ enum FlowerType {
 }
 
 extension FlowerTypeLabels on FlowerType {
-  String get label {
+  String label(AppLocalizations l10n) {
     switch (this) {
       case FlowerType.sunflower:
-        return "Słonecznik";
+        return l10n.flowersTypeSunflower;
       case FlowerType.rose:
-        return "Róża";
+        return l10n.flowersTypeRose;
       case FlowerType.lavender:
-        return "Lawenda";
+        return l10n.flowersTypeLavender;
       case FlowerType.tulip:
-        return "Tulipan";
+        return l10n.flowersTypeTulip;
       case FlowerType.custom:
-        return "Inny kwiatek";
+        return l10n.flowersTypeCustom;
     }
   }
-    String get assetPath {
+
+  String get assetPath {
     switch (this) {
       case FlowerType.sunflower:
-        return "assets/sunflower.png";
+        return 'assets/sunflower.png';
       case FlowerType.rose:
-        return "assets/rose.png";
+        return 'assets/rose.png';
       case FlowerType.lavender:
-        return "assets/lavender1.png";
+        return 'assets/lavender1.png';
       case FlowerType.tulip:
-        return "assets/tulip.png";
+        return 'assets/tulip.png';
       case FlowerType.custom:
-        return "assets/stokrotka_cleared.png";
+        return 'assets/stokrotka_cleared.png';
     }
   }
 }
-
-
-
 
 class MemoryEntry {
   final String id;
@@ -78,7 +74,6 @@ class MemoryEntry {
 /// --------------------
 ///  BOTTOM SHEET UI
 /// --------------------
-
 class AddMemorySheet extends StatefulWidget {
   final void Function(MemoryEntry memory) onSave;
 
@@ -94,76 +89,6 @@ class _AddMemorySheetState extends State<AddMemorySheet>
   String? imagePath;
   final TextEditingController controller = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-
-Future<void> _pickCustomImage() async {
-  final ImageSource? source = await showModalBottomSheet<ImageSource>(
-    context: context,
-    builder: (_) => SafeArea(
-      child: Wrap(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.photo),
-            title: const Text('Galeria'),
-            onTap: () => Navigator.pop(context, ImageSource.gallery),
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_camera),
-            title: const Text('Aparat'),
-            onTap: () => Navigator.pop(context, ImageSource.camera),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  if (source == null) return;
-
-  final XFile? picked = await _picker.pickImage(
-    source: source,
-    imageQuality: 100,
-  );
-  if (picked == null) return;
-
-  // 🔽 CROP (okrąg – dokładnie jak ramka kwiatu)
-final CroppedFile? cropped = await ImageCropper().cropImage(
-  sourcePath: picked.path,
-  compressQuality: 90,
-  uiSettings: [
-    AndroidUiSettings(
-      toolbarTitle: 'Dopasuj zdjęcie',
-      toolbarColor: const Color(0xFFFFF4D6),
-      toolbarWidgetColor: Colors.black,
-      backgroundColor: Colors.black,
-      hideBottomControls: true,
-      lockAspectRatio: true,
-      cropStyle: CropStyle.circle, // ✅ tutaj
-    ),
-    IOSUiSettings(
-      title: 'Dopasuj zdjęcie',
-      aspectRatioLockEnabled: true,
-      cropStyle: CropStyle.circle, // ✅ i tutaj
-    ),
-  ],
-);
-
-
-  if (cropped == null) return;
-
-  // 🔽 zapis do Documents (trwała ścieżka)
-  final dir = await getApplicationDocumentsDirectory();
-  final fileName = 'memory_${DateTime.now().millisecondsSinceEpoch}.jpg';
-  final savedPath = p.join(dir.path, fileName);
-
-  final savedFile = await File(cropped.path).copy(savedPath);
-
-  setState(() {
-    imagePath = savedFile.path;
-    selectedFlower = FlowerType.custom;
-  });
-}
-
-
-
 
   late AnimationController _blastController;
   bool _isBlasting = false;
@@ -191,8 +116,78 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
     super.dispose();
   }
 
+  Future<void> _pickCustomImage() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: Text(l10n.flowersAddMemoryGallery),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: Text(l10n.flowersAddMemoryCamera),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final XFile? picked = await _picker.pickImage(
+      source: source,
+      imageQuality: 100,
+    );
+    if (picked == null) return;
+
+    // Crop do okręgu pasuje do ramki kwiatu.
+    final CroppedFile? cropped = await ImageCropper().cropImage(
+      sourcePath: picked.path,
+      compressQuality: 90,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: l10n.flowersAddMemoryAdjustPhoto,
+          toolbarColor: const Color(0xFFFFF4D6),
+          toolbarWidgetColor: Colors.black,
+          backgroundColor: Colors.black,
+          hideBottomControls: true,
+          lockAspectRatio: true,
+          cropStyle: CropStyle.circle,
+        ),
+        IOSUiSettings(
+          title: l10n.flowersAddMemoryAdjustPhoto,
+          aspectRatioLockEnabled: true,
+          cropStyle: CropStyle.circle,
+        ),
+      ],
+    );
+
+    if (cropped == null) return;
+
+    // Zapisujemy plik do Documents, żeby ścieżka była trwała.
+    final dir = await getApplicationDocumentsDirectory();
+    final fileName = 'memory_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final savedPath = p.join(dir.path, fileName);
+
+    final savedFile = await File(cropped.path).copy(savedPath);
+
+    setState(() {
+      imagePath = savedFile.path;
+      selectedFlower = FlowerType.custom;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     final content = Padding(
       padding: EdgeInsets.only(
         left: 24,
@@ -204,20 +199,21 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Zasiej świadomą myśl 🌼",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text(
+            l10n.flowersAddMemoryTitle,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-
-          // LISTA KWIATKÓW
+          // Lista predefiniowanych kwiatów.
           SizedBox(
             height: 90,
             child: ListView(
               scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(vertical: 2), // ✅ ZAPAS NA SCALE
-                  clipBehavior: Clip.none, // opcjonalnie, ale polecam
-              children: FlowerType.values.take(FlowerType.values.length - 1).map((flower) {
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              clipBehavior: Clip.none,
+              children: FlowerType.values
+                  .take(FlowerType.values.length - 1)
+                  .map((flower) {
                 final isSelected = selectedFlower == flower;
 
                 return GestureDetector(
@@ -265,20 +261,19 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
                                 ? _customFlowerFramePreview(
                                     frameAssetPath: flower.assetPath,
                                     imagePath: imagePath!.trim(),
-                                    size: 56, // możesz dać 54–62 pod gust
+                                    size: 56,
                                   )
                                 : Image.asset(
                                     flower.assetPath,
                                     fit: BoxFit.contain,
                                   ),
                           ),
-                          
-                            const SizedBox(height: 6),
-                            Text(
-                              flower.label,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                          ],
+                          const SizedBox(height: 6),
+                          Text(
+                            flower.label(l10n),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -286,41 +281,34 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
               }).toList(),
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // ZDJĘCIE (placeholder)
+          // Pole na własne zdjęcie użytkownika.
           GestureDetector(
-            onTap: () {
-              _pickCustomImage();
-            },
+            onTap: _pickCustomImage,
             child: Container(
               height: 80,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.circular(16),
               ),
-                  child: Center(
-                    child: imagePath == null
-                        ? const Text("Dodaj własne zdjęcie 📸")
-                        : _customFlowerFramePreview(
-                            frameAssetPath: FlowerType.custom.assetPath,
-                            imagePath: imagePath!.trim(),
-                            size: 80,
-                          ),
-                  ),
-
+              child: Center(
+                child: imagePath == null
+                    ? Text(l10n.flowersAddMemoryCustomPhoto)
+                    : _customFlowerFramePreview(
+                        frameAssetPath: FlowerType.custom.assetPath,
+                        imagePath: imagePath!.trim(),
+                        size: 80,
+                      ),
+              ),
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // OPIS
+          // Opis wspomnienia / myśli.
           TextField(
             controller: controller,
             maxLines: 4,
             decoration: InputDecoration(
-              hintText: "Opisz swoją myśl...",
+              hintText: l10n.flowersAddMemoryDescriptionHint,
               filled: true,
               fillColor: const Color(0xffFFF1C7),
               border: OutlineInputBorder(
@@ -329,10 +317,8 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
               ),
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // PRZYCISK ZAPISU
+          // Główny przycisk zapisu.
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xffF8C848),
@@ -343,9 +329,9 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
               ),
             ),
             onPressed: _isBlasting ? null : _onSavePressed,
-            child: const Text(
-              "Zapisz myśl",
-              style: TextStyle(fontSize: 18),
+            child: Text(
+              l10n.flowersAddMemorySaveThought,
+              style: const TextStyle(fontSize: 18),
             ),
           ),
         ],
@@ -373,37 +359,86 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
                       t,
                       const Offset(0, 40),
                       const Offset(-80, -160),
-                      "🌼",
+                      '🌽',
                     ),
                     _buildFlyingFlower(
                       t,
                       const Offset(0, 40),
                       const Offset(60, -140),
-                      "🌸",
+                      '🌸',
                     ),
                     _buildFlyingFlower(
                       t,
                       const Offset(0, 40),
                       const Offset(-40, -120),
-                      "🌺",
+                      '🌺',
                     ),
                     _buildFlyingFlower(
                       t,
                       const Offset(0, 40),
                       const Offset(90, -180),
-                      "💮",
+                      '💮',
                     ),
-                     _buildFlyingFlower(t, const Offset(0, 40), const Offset(-40, -120), "🌼"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(30, -130), "🌸"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(-70, -150), "🌺"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(60, -160), "💮"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(-100, -180), "🌻"),
-
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(20, -110), "🌼"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(-20, -140), "🌸"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(80, -150), "🌺"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(-90, -170), "💮"),
-            _buildFlyingFlower(t, const Offset(0, 40), const Offset(50, -190), "🌻"),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(-40, -120),
+                      '🌼',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(30, -130),
+                      '🌸',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(-70, -150),
+                      '🌺',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(60, -160),
+                      '💮',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(-100, -180),
+                      '🌻',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(20, -110),
+                      '🌼',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(-20, -140),
+                      '🌸',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(80, -150),
+                      '🌺',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(-90, -170),
+                      '💮',
+                    ),
+                    _buildFlyingFlower(
+                      t,
+                      const Offset(0, 40),
+                      const Offset(50, -190),
+                      '🌻',
+                    ),
                   ],
                 );
               },
@@ -443,58 +478,53 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
   }
 
   Widget _customFlowerFramePreview({
-  required String frameAssetPath,
-  required String imagePath,
-  double size = 56,
-}) {
-  return SizedBox(
-    width: size,
-    height: size,
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-              Transform.translate(
-        offset: Offset(0, -size * 0.18),
-        child: SizedBox(
-          width: size * 0.40,
-          height: size * 0.40,
-        child: ClipOval(
-          child: Image.file(
-            File(imagePath),
- // dostosuj jeśli trzeba
-            fit: BoxFit.cover,
+    required String frameAssetPath,
+    required String imagePath,
+    double size = 56,
+  }) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Zdjęcie ląduje wewnątrz środka kwiatka.
+          Transform.translate(
+            offset: Offset(0, -size * 0.18),
+            child: SizedBox(
+              width: size * 0.40,
+              height: size * 0.40,
+              child: ClipOval(
+                child: Image.file(
+                  File(imagePath),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
           ),
-        ),
-              ),
-              ),
-
-        // Ramka kwiatu na wierzchu
-        Image.asset(
-          frameAssetPath,
-          width: size,
-          height: size,
-          fit: BoxFit.contain,
-        ),
-      ],
-    ),
-  );
-}
-
+          // Ramka kwiatu przykrywa zdjęcie od góry.
+          Image.asset(
+            frameAssetPath,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> _onSavePressed() async {
     final text = controller.text.trim();
     if (text.isEmpty) return;
 
-    final String? pathToSave =
-        (imagePath != null && imagePath!.trim().isNotEmpty)
-            ? imagePath!.trim()
-            : selectedFlower?.assetPath;
+    final String? pathToSave = (imagePath != null && imagePath!.trim().isNotEmpty)
+        ? imagePath!.trim()
+        : selectedFlower?.assetPath;
 
     if (pathToSave == null || pathToSave.isEmpty) return;
 
     await repo.addItem(text, pathToSave);
-
-
 
     final memory = MemoryEntry(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -511,14 +541,15 @@ final CroppedFile? cropped = await ImageCropper().cropImage(
 
     _blastController.forward(from: 0);
   }
-  
 }
 
 /// --------------------
 ///  HELPER DO WYWOŁANIA
 /// --------------------
-
-void showAddMemorySheet(BuildContext context, void Function(MemoryEntry) onSave) {
+void showAddMemorySheet(
+  BuildContext context,
+  void Function(MemoryEntry) onSave,
+) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -531,4 +562,5 @@ void showAddMemorySheet(BuildContext context, void Function(MemoryEntry) onSave)
     },
   );
 }
+
 List<MemoryEntry> memories = [];

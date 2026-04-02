@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:mind_garden/flowers.dart';
+import 'package:mind_garden/l10n/app_localizations.dart';
 
 import 'data/repository.dart';
 import 'models/db_item.dart';
@@ -27,10 +28,10 @@ class _GardenPageState extends State<GardenPage>
   @override
   bool get wantKeepAlive => true;
 
-    Widget _gardenFlower(String path, {double size = 90}) {
+  Widget _gardenFlower(String path, {double size = 90}) {
     final p = path.trim();
 
-    // asset → jak było
+    // asset -> klasyczny kwiat z zasobów
     if (p.startsWith('assets/')) {
       return Image.asset(
         p,
@@ -40,38 +41,36 @@ class _GardenPageState extends State<GardenPage>
       );
     }
 
-    // file (custom) → zdjęcie w środku + ramka kwiatu
-return SizedBox(
-  width: size,
-  height: size,
-  child: Stack(
-    alignment: Alignment.center,
-    children: [
-      Transform.translate(
-        offset: Offset(0, -size * 0.18), // 👈 przesunięcie do środka kwiatu
-        child: SizedBox(
-          width: size * 0.40,
-          height: size * 0.40,
-          child: ClipOval(
-            child: Image.file(
-              File(p),
-              fit: BoxFit.cover,
+    // file -> zdjęcie w środku + ramka kwiatu
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Transform.translate(
+            offset: Offset(0, -size * 0.18),
+            child: SizedBox(
+              width: size * 0.40,
+              height: size * 0.40,
+              child: ClipOval(
+                child: Image.file(
+                  File(p),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
-        ),
+          Image.asset(
+            kCustomFrameAsset,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+          ),
+        ],
       ),
-
-      Image.asset(
-        kCustomFrameAsset,
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-      ),
-    ],
-  ),
-);
+    );
   }
-
 
   ImageProvider _imageProvider(String path) {
     final p = path.trim();
@@ -82,14 +81,15 @@ return SizedBox(
   void _reconcilePositions(List<DbItem> items) {
     final currentIds = items.map((e) => e.id).toSet();
 
-    // usuń pozycje dla rekordów, których już nie ma (np. wypadły z 24h albo skasowane)
-    final toRemove = _posById.keys.where((id) => !currentIds.contains(id)).toList();
+    // Usuń pozycje dla rekordów, których już nie ma.
+    final toRemove =
+        _posById.keys.where((id) => !currentIds.contains(id)).toList();
     for (final id in toRemove) {
       final pos = _posById.remove(id);
       if (pos != null) _occupied.remove(pos);
     }
 
-    // przypisz pozycje dla nowych rekordów
+    // Przypisz pozycje dla nowych rekordów.
     final random = Random();
     for (final item in items) {
       if (_posById.containsKey(item.id)) continue;
@@ -104,147 +104,142 @@ return SizedBox(
   }
 
   void showMemorySheet(
-  BuildContext context,
-  DbItem item,
-  ImageProvider image,
-) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) {
-      final maxH = MediaQuery.of(context).size.height * 0.78;
+    BuildContext context,
+    DbItem item,
+    ImageProvider image,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
 
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxH),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF4D6),
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.10),
-                  blurRadius: 30,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                child: Column(
-                  children: [
-                    // uchwyt
-                    Container(
-                      width: 46,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                    ),
-                    const SizedBox(height: 14),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) {
+        final maxH = MediaQuery.of(context).size.height * 0.78;
 
-                    // ✅ STAŁY OBRAZ (nie scrolluje)
-                    Container(
-                      width: 170,
-                      height: 170,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.55),
-                        borderRadius: BorderRadius.circular(26),
-                        border: Border.all(
-                          color: Colors.black.withOpacity(0.06),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxH),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF4D6),
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 30,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  child: Column(
+                    children: [
+                      // Uchwyt bottom sheeta.
+                      Container(
+                        width: 46,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(99),
                         ),
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image(image: image, fit: BoxFit.contain),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // ✅ (opcjonalnie) stały tytuł — możesz wywalić jeśli title jest długie
-                    Text(
-                      'Wspomnienie',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: const Color(0xFF2B2B2B).withOpacity(0.65),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // 🔽 SCROLLOWANY TEKST
-                    Expanded(
-                      child: Container(
-                        width: double.infinity,
+                      const SizedBox(height: 14),
+                      // Stały obraz.
+                      Container(
+                        width: 170,
+                        height: 170,
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.40),
-                          borderRadius: BorderRadius.circular(18),
+                          color: Colors.white.withOpacity(0.55),
+                          borderRadius: BorderRadius.circular(26),
                           border: Border.all(
                             color: Colors.black.withOpacity(0.06),
                           ),
                         ),
-                        child: SingleChildScrollView(
-                          child: Text(
-                            item.title,
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              height: 1.35,
-                              color: Color(0xFF2B2B2B),
-                              fontWeight: FontWeight.w500,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: Image(image: image, fit: BoxFit.contain),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Nagłówek.
+                      Text(
+                        l10n.holyGardenMemoryTitle,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color(0xFF2B2B2B).withOpacity(0.65),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Przewijana treść wspomnienia.
+                      Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.40),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: Colors.black.withOpacity(0.06),
+                            ),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              item.title,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                height: 1.35,
+                                color: Color(0xFF2B2B2B),
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // stały przycisk
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF7C948),
-                          foregroundColor: const Color(0xFF2B2B2B),
-                          shape: const StadiumBorder(),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          elevation: 0,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Zamknij',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                      const SizedBox(height: 12),
+                      // Stały przycisk zamknięcia.
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFF7C948),
+                            foregroundColor: const Color(0xFF2B2B2B),
+                            shape: const StadiumBorder(),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 0,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            l10n.commonClose,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
-
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
-      // ✅ identyczna logika tła jak u Ciebie na stronie głównej
+      // Identyczne tło jak na docelowej stronie ogrodu.
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/holy_garden_clean.png'),
@@ -255,45 +250,44 @@ return SizedBox(
         child: ValueListenableBuilder<Box<DbItem>>(
           valueListenable: repo.listenable(),
           builder: (context, box, _) {
-            final items = repo.getFreshLast5(); // 5 z <=24h
+            final items = repo.getFreshLast5();
 
-            // dopasuj mapę pozycji do aktualnych elementów
+            // Dopasuj mapę pozycji do aktualnych elementów.
             _reconcilePositions(items);
 
             if (items.isEmpty) {
               return Center(
                 child: Container(
-  padding: const EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 14,
-  ),
-  decoration: BoxDecoration(
-    color: const Color(0xFFFFF6D8), // bardzo jasny krem
-    borderRadius: BorderRadius.circular(18),
-    border: Border.all(
-      color: const Color(0xFFE2D3A3), // ciepła ramka
-      width: 2,
-    ),
-    boxShadow: const [
-      BoxShadow(
-        color: Color(0x33000000),
-        blurRadius: 6,
-        offset: Offset(0, 3),
-      ),
-    ],
-  ),
-  child: const Text(
-    'Brak kwiatów z ostatnich 24h 🌱',
-    textAlign: TextAlign.center,
-    style: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w600,
-      height: 1.4,
-      color: Color(0xFF5A5A2E), // oliwkowy, nie czarny
-    ),
-  ),
-)
-,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF6D8),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: const Color(0xFFE2D3A3),
+                      width: 2,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x33000000),
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    l10n.holyGardenEmptyRecentFlowers,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                      color: Color(0xFF5A5A2E),
+                    ),
+                  ),
+                ),
               );
             }
 
@@ -302,11 +296,12 @@ return SizedBox(
             final h = screen.height;
 
             const flowerSize = 90.0;
-            
+
             return Stack(
               children: [
                 for (final item in items)
-                  if ((item.flowerImagePath ?? '').trim().isNotEmpty && _posById[item.id] != null)
+                  if ((item.flowerImagePath ?? '').trim().isNotEmpty &&
+                      _posById[item.id] != null)
                     () {
                       final path = item.flowerImagePath!.trim();
                       final img = _imageProvider(path);
@@ -316,16 +311,15 @@ return SizedBox(
                         top: h * _posById[item.id]!.dy - (flowerSize / 2),
                         child: GestureDetector(
                           onTap: () => showMemorySheet(context, item, img),
-                            child: _gardenFlower(
-                              item.flowerImagePath!.trim(),
-                              size: flowerSize,
-                            ),
+                          child: _gardenFlower(
+                            item.flowerImagePath!.trim(),
+                            size: flowerSize,
+                          ),
                         ),
                       );
                     }(),
               ],
             );
-
           },
         ),
       ),
@@ -334,10 +328,9 @@ return SizedBox(
 }
 
 final List<Offset> flowerPositions = [
-  Offset(0.18, 0.65),
-  Offset(0.32, 0.78),
-  Offset(0.72, 0.62),
-  Offset(0.75, 0.77),
-  Offset(0.85, 0.69),
+  const Offset(0.18, 0.65),
+  const Offset(0.32, 0.78),
+  const Offset(0.72, 0.62),
+  const Offset(0.75, 0.77),
+  const Offset(0.85, 0.69),
 ];
-

@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:mind_garden/data/repository.dart';
+import 'package:mind_garden/l10n/app_localizations.dart';
+
 import '../models/db_item.dart';
 
 class DbManagementPage extends StatefulWidget {
+  const DbManagementPage({super.key});
+
   @override
   State<DbManagementPage> createState() => _DbManagementPageState();
 }
@@ -15,14 +19,14 @@ class _DbManagementPageState extends State<DbManagementPage> {
   final repo = GetIt.I<ItemsRepository>();
   final controller = TextEditingController();
 
-  // 🎨 Spójna paleta
-  static const _bg1 = Color(0xFFFFF4D6); // główne tło (krem)
-  static const _bg2 = Color(0xFFFFF4D6); // zostaw takie samo
-  static const _bg3 = Color.fromARGB(255, 250, 249, 245); // żeby gradient był neutralny
+  // Spójna paleta
+  static const _bg1 = Color(0xFFFFF4D6);
+  static const _bg2 = Color(0xFFFFF4D6);
+  static const _bg3 = Color.fromARGB(255, 250, 249, 245);
 
-  static const _cream = Color(0xFFFFF4D6); // krem bazowy
-  static const _gold = Color(0xFFF7C948);  // żółty przycisk
-  static const _textDark = Color(0xFF2B2B2B); // tekst
+  static const _cream = Color(0xFFFFF4D6);
+  static const _gold = Color(0xFFF7C948);
+  static const _textDark = Color(0xFF2B2B2B);
 
   @override
   void dispose() {
@@ -30,14 +34,14 @@ class _DbManagementPageState extends State<DbManagementPage> {
     super.dispose();
   }
 
-  // 🔁 asset vs file → jeden provider
+  // asset vs file -> jeden provider
   ImageProvider _imageProvider(String path) {
     final p = path.trim();
     if (p.startsWith('assets/')) return AssetImage(p);
     return FileImage(File(p));
   }
 
-  // 🌼 Ikonka kwiatka do kafelka listy
+  // Ikonka kwiatka do kafelka listy
   Widget _buildFlowerIcon(String? path) {
     if (path == null || path.trim().isEmpty) {
       return const SizedBox(width: 40, height: 40);
@@ -71,8 +75,9 @@ class _DbManagementPageState extends State<DbManagementPage> {
     );
   }
 
-  // 🌌 Bottom sheet: obrazek stały, tekst scroll
+  // Bottom sheet: obrazek stały, tekst scrollowany
   void _showItemSheet(BuildContext context, DbItem item) {
+    final l10n = AppLocalizations.of(context)!;
     final path = (item.flowerImagePath ?? '').trim();
     if (path.isEmpty) return;
 
@@ -118,7 +123,6 @@ class _DbManagementPageState extends State<DbManagementPage> {
                         ),
                       ),
                       const SizedBox(height: 14),
-
                       // obrazek stały
                       Container(
                         width: 170,
@@ -134,12 +138,10 @@ class _DbManagementPageState extends State<DbManagementPage> {
                           child: Image(image: img, fit: BoxFit.contain),
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // nagłówek (na razie stały)
+                      // nagłówek
                       Text(
-                        'Wspomnienie',
+                        l10n.dbPageMemoryTitle,
                         style: TextStyle(
                           fontSize: 13,
                           letterSpacing: 0.6,
@@ -148,7 +150,6 @@ class _DbManagementPageState extends State<DbManagementPage> {
                         ),
                       ),
                       const SizedBox(height: 10),
-
                       // przewijany tekst
                       Expanded(
                         child: Container(
@@ -172,9 +173,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
                       Row(
                         children: [
                           Expanded(
@@ -183,18 +182,20 @@ class _DbManagementPageState extends State<DbManagementPage> {
                                 backgroundColor: _gold,
                                 foregroundColor: _textDark,
                                 shape: const StadiumBorder(),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
                                 elevation: 0,
                               ),
                               onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                'Zamknij',
-                                style: TextStyle(fontWeight: FontWeight.w800),
+                              child: Text(
+                                l10n.commonClose,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 10),
-                          
                         ],
                       ),
                     ],
@@ -210,9 +211,11 @@ class _DbManagementPageState extends State<DbManagementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Stack(
       children: [
-        // 🌌 Kosmiczno-medytacyjne tło
+        // Kosmiczno-medytacyjne tło
         Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -222,8 +225,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
             ),
           ),
         ),
-
-        // 📜 Panel z listą
+        // Panel z listą
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 110),
@@ -248,7 +250,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
                   if (items.isEmpty) {
                     return Center(
                       child: Text(
-                        'Brak zapisanych danych',
+                        l10n.dbPageEmptyState,
                         style: TextStyle(
                           fontSize: 16,
                           color: _textDark.withOpacity(0.75),
@@ -278,7 +280,9 @@ class _DbManagementPageState extends State<DbManagementPage> {
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.88),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.black.withOpacity(0.05)),
+                            border: Border.all(
+                              color: Colors.black.withOpacity(0.05),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.06),
@@ -292,8 +296,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
                             children: [
                               _buildFlowerIcon(item.flowerImagePath),
                               const SizedBox(width: 12),
-
-                              // ✅ max 4 linie + ...
+                              // max 4 linie + ...
                               Expanded(
                                 child: Text(
                                   item.title,
@@ -307,7 +310,6 @@ class _DbManagementPageState extends State<DbManagementPage> {
                                   ),
                                 ),
                               ),
-
                               const SizedBox(width: 8),
                               IconButton(
                                 icon: const Icon(Icons.close),
@@ -325,8 +327,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
             ),
           ),
         ),
-
-        // ➕ Dolny panel dodawania
+        // Dolny panel dodawania
         Align(
           alignment: Alignment.bottomCenter,
           child: SafeArea(
@@ -352,8 +353,10 @@ class _DbManagementPageState extends State<DbManagementPage> {
                       child: TextField(
                         controller: controller,
                         decoration: InputDecoration(
-                          hintText: 'Dodaj ulubione wspomnienia...',
-                          hintStyle: TextStyle(color: _textDark.withOpacity(0.45)),
+                          hintText: l10n.dbPageAddFavoriteMemoriesHint,
+                          hintStyle: TextStyle(
+                            color: _textDark.withOpacity(0.45),
+                          ),
                           border: InputBorder.none,
                         ),
                         onSubmitted: (_) => _add(),
@@ -371,9 +374,9 @@ class _DbManagementPageState extends State<DbManagementPage> {
                         elevation: 0,
                       ),
                       onPressed: _add,
-                      child: const Text(
-                        'Dodaj',
-                        style: TextStyle(fontWeight: FontWeight.w800),
+                      child: Text(
+                        l10n.commonAdd,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -390,7 +393,7 @@ class _DbManagementPageState extends State<DbManagementPage> {
     final text = controller.text.trim();
     if (text.isEmpty) return;
 
-    await repo.addItem(text, "assets/sunflower.png");
+    await repo.addItem(text, 'assets/sunflower.png');
     controller.clear();
   }
 }
