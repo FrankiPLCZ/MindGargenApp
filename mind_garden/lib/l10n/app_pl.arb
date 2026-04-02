@@ -1,0 +1,54 @@
+{
+  "@@locale": "pl",
+  "appTitle": "Mind Garden",
+  "commonOk": "OK",
+  "commonClose": "Zamknij",
+  "commonNext": "Dalej",
+  "commonSkip": "Pomiń",
+  "commonStart": "Zaczynajmy",
+  "commonAdd": "Dodaj",
+  "@mainFile": {
+    "description": "Teksty pochodzące z lib/main.dart"
+  },
+  "mainOnboardingWelcomeTitle": "Witaj w Mind Garden",
+  "mainOnboardingWelcomeDescription": "Chwasty to twoje nieświadome myśli, zamieniaj je codziennie w piękne kwiaty, aż twój ogród rozkwitnie i zmieni twoje życie w świadome bycie tu i teraz.",
+  "mainOnboardingAddWeedsTitle": "Dodawaj chwasty",
+  "mainOnboardingAddWeedsDescription": "Na głównym ekranie kliknij „Dodaj chwast”. Pojawi się chwast, który reprezentuje myśl do przepracowania.",
+  "mainOnboardingWorkWithEmotionTitle": "Pracuj z emocją",
+  "mainOnboardingWorkWithEmotionDescription": "Kliknij chwast, aby przejść dalej i zastąpić go pięknym wspomnieniem. Po zapisie zobaczysz je w swoim ogrodzie.",
+  "mainOnboardingCareGardenTitle": "Dbaj o swój ogród",
+  "mainOnboardingCareGardenDescription": "W ogrodzie wyświetlają się kwiaty dodane w ostatnich 24 h. Dbaj o to, aby twój ogród był zawsze pełny, a umysł spokojny.",
+  "mainOnboardingManageFlowersTitle": "Zarządzaj swoimi kwiatami",
+  "mainOnboardingManageFlowersDescription": "W panelu z lewej strony przeglądaj lub usuwaj swoje kwiaty.",
+  "mainHomeAddWeed": "Dodaj chwast",
+  "mainDialogLimitReachedTitle": "Limit osiągnięty",
+  "mainDialogLimitReachedMessage": "Pracuj nad maksymalnie pięcioma myślami naraz.",
+  "mainDialogAttentionTitle": "Uwaga",
+  "mainDialogAttentionMessage": "Skup się na jednej myśli naraz. Poczekaj 10 sekund przed kolejnym kliknięciem.",
+  "@flowersFile": {
+    "description": "Teksty pochodzące z lib/flowers.dart"
+  },
+  "flowersAddMemoryTitle": "Zasiej świadomą myśl",
+  "flowersAddMemoryGallery": "Galeria",
+  "flowersAddMemoryCamera": "Aparat",
+  "flowersAddMemoryAdjustPhoto": "Dopasuj zdjęcie",
+  "flowersAddMemoryCustomPhoto": "Dodaj własne zdjęcie",
+  "flowersAddMemoryDescriptionHint": "Opisz swoją myśl...",
+  "flowersAddMemorySaveThought": "Zapisz myśl",
+  "flowersTypeSunflower": "Słonecznik",
+  "flowersTypeRose": "Róża",
+  "flowersTypeLavender": "Lawenda",
+  "flowersTypeTulip": "Tulipan",
+  "flowersTypeCustom": "Inny kwiatek",
+  "@holyGardenFile": {
+    "description": "Teksty pochodzące z lib/holy_garden.dart"
+  },
+  "holyGardenMemoryTitle": "Wspomnienie",
+  "holyGardenEmptyRecentFlowers": "Brak kwiatów z ostatnich 24 h",
+  "@dbPageFile": {
+    "description": "Teksty pochodzące z lib/db_page.dart"
+  },
+  "dbPageMemoryTitle": "Wspomnienie",
+  "dbPageEmptyState": "Brak zapisanych danych",
+  "dbPageAddFavoriteMemoriesHint": "Dodaj ulubione wspomnienia..."
+}

@@ -1,0 +1,54 @@
+{
+  "@@locale": "en",
+  "appTitle": "Mind Garden",
+  "commonOk": "OK",
+  "commonClose": "Close",
+  "commonNext": "Next",
+  "commonSkip": "Skip",
+  "commonStart": "Let's begin",
+  "commonAdd": "Add",
+  "@mainFile": {
+    "description": "Strings from lib/main.dart"
+  },
+  "mainOnboardingWelcomeTitle": "Welcome to Mind Garden",
+  "mainOnboardingWelcomeDescription": "Weeds are your unconscious thoughts. Transform them into beautiful flowers every day until your garden blooms and your life becomes a mindful here and now.",
+  "mainOnboardingAddWeedsTitle": "Add weeds",
+  "mainOnboardingAddWeedsDescription": "On the main screen, tap “Add weed”. A weed will appear to represent a thought you want to work through.",
+  "mainOnboardingWorkWithEmotionTitle": "Work with emotion",
+  "mainOnboardingWorkWithEmotionDescription": "Tap a weed to move forward and replace it with a beautiful memory. After saving, you will see it in your garden.",
+  "mainOnboardingCareGardenTitle": "Take care of your garden",
+  "mainOnboardingCareGardenDescription": "The garden shows flowers added within the last 24 hours. Keep your garden full and your mind calm.",
+  "mainOnboardingManageFlowersTitle": "Manage your flowers",
+  "mainOnboardingManageFlowersDescription": "Use the panel on the left to browse or delete your flowers.",
+  "mainHomeAddWeed": "Add weed",
+  "mainDialogLimitReachedTitle": "Limit reached",
+  "mainDialogLimitReachedMessage": "Work on no more than five thoughts at once.",
+  "mainDialogAttentionTitle": "Attention",
+  "mainDialogAttentionMessage": "Focus on one thought at a time. Wait 10 seconds before tapping again.",
+  "@flowersFile": {
+    "description": "Strings from lib/flowers.dart"
+  },
+  "flowersAddMemoryTitle": "Plant a mindful thought",
+  "flowersAddMemoryGallery": "Gallery",
+  "flowersAddMemoryCamera": "Camera",
+  "flowersAddMemoryAdjustPhoto": "Adjust photo",
+  "flowersAddMemoryCustomPhoto": "Add your own photo",
+  "flowersAddMemoryDescriptionHint": "Describe your thought...",
+  "flowersAddMemorySaveThought": "Save thought",
+  "flowersTypeSunflower": "Sunflower",
+  "flowersTypeRose": "Rose",
+  "flowersTypeLavender": "Lavender",
+  "flowersTypeTulip": "Tulip",
+  "flowersTypeCustom": "Another flower",
+  "@holyGardenFile": {
+    "description": "Strings from lib/holy_garden.dart"
+  },
+  "holyGardenMemoryTitle": "Memory",
+  "holyGardenEmptyRecentFlowers": "No flowers from the last 24 hours",
+  "@dbPageFile": {
+    "description": "Strings from lib/db_page.dart"
+  },
+  "dbPageMemoryTitle": "Memory",
+  "dbPageEmptyState": "No saved data",
+  "dbPageAddFavoriteMemoriesHint": "Add your favorite memories..."
+}
