@@ -73,7 +73,7 @@ class _FirstLaunchGateState extends State<FirstLaunchGate> {
 
     if (!mounted) return;
     setState(() {
-      _shouldShowOnboarding = true;
+      _shouldShowOnboarding = !firstLaunchDone;
     });
   }
 
