@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // globalna blokada ripple
 final ValueNotifier<bool> rippleButtonBlocked = ValueNotifier<bool>(false);
 final getIt = GetIt.instance;
+final AudioPlayer gongPlayer = AudioPlayer();
 
 
 
@@ -615,7 +616,6 @@ class _RippleButtonState extends State<RippleButton>
   Offset? tapPosition;
   late AnimationController _controller;
   double _opacity = 1.0;
-  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -629,7 +629,6 @@ class _RippleButtonState extends State<RippleButton>
   @override
   void dispose() {
     _controller.dispose();
-    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -668,8 +667,9 @@ class _RippleButtonState extends State<RippleButton>
     });
 
     _controller.forward(from: 0);
-    await _audioPlayer.setVolume(0.1);
-    await _audioPlayer.play(AssetSource('gong1.wav'));
+    await gongPlayer.stop();
+    await gongPlayer.setVolume(0.1);
+    await gongPlayer.play(AssetSource('gong1.wav'));
 
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) widget.onRemove();
