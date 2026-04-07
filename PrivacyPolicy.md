@@ -73,6 +73,8 @@ You can delete your data at any time by:
 
 Once the app is uninstalled, all data is irreversibly removed.
 
+---
+
 ## 7. Children's Privacy
 
 This application does not knowingly collect personal information from anyone, including children under 13 years of age, because no data is collected at all.
