@@ -1,7 +1,7 @@
 # Privacy Policy  
 **for Mind Garden**
 
-_Last updated: 25.02.2026_
+_Last updated: 07.04.2026_
 
 ---
 
@@ -63,19 +63,29 @@ Since all data is stored locally on the user’s device:
 
 ---
 
-## 6. Children's Privacy
+## 6. Data Retention and Deletion
+
+Data is stored for as long as the app remains installed on your device.
+
+You can delete your data at any time by:
+- removing individual entries within the app, or
+- uninstalling the app, which permanently deletes all stored data from your device.
+
+Once the app is uninstalled, all data is irreversibly removed.
+
+## 7. Children's Privacy
 
 This application does not knowingly collect personal information from anyone, including children under 13 years of age, because no data is collected at all.
 
 ---
 
-## 7. Changes to This Privacy Policy
+## 8. Changes to This Privacy Policy
 
 If future updates introduce features that involve data collection or internet connectivity, this Privacy Policy will be updated accordingly.
 
 ---
 
-## 8. Contact
+## 9. Contact
 
 If you have any questions regarding this Privacy Policy, please contact:
 
