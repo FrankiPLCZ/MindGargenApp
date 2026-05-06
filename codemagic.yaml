@@ -8,16 +8,23 @@ workflows:
       flutter: stable
       xcode: latest
 
+    integrations:
+      app_store_connect: Codemagic
+
     scripts:
       - name: Get Flutter packages
         script: |
           cd mind_garden
           flutter pub get
 
-      - name: Build iOS no signing
+      - name: Build IPA
         script: |
           cd mind_garden
-          flutter build ios --release --no-codesign
+          flutter build ipa --release
 
     artifacts:
-      - mind_garden/build/ios/iphoneos/*.app
+      - mind_garden/build/ios/ipa/*.ipa
+
+    publishing:
+      app_store_connect:
+        submit_to_testflight: true
