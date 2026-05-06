@@ -7,9 +7,9 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-
-    integrations:
-      app_store_connect: Codemagic
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.franki.mindgarden
 
     scripts:
       - name: Get Flutter packages
