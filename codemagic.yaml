@@ -12,9 +12,6 @@ workflows:
       xcode: latest
 
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.franki.mindgarden
-
         provisioning_profiles:
           - mindgarden_profile
 
